@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_import_mesh"
+            android:icon="@drawable/document_open"
+            android:title="Import" />
+        <item
+            android:id="@+id/nav_export_mesh"
+            android:icon="@drawable/document_save_as"
+            android:title="Export" />
+        <item
+            android:id="@+id/nav_sketch_modeling"
+            android:icon="@drawable/pencil"
+            android:title="Sketch Modeling" />
+        <item
+            android:id="@+id/nav_deformation"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Deformation" />
+    </group>
+
+    <item android:title="Tools"
+        android:icon="@drawable/ic_menu_manage">
+        <menu>
+            <item
+                android:id="@+id/nav_decimate"
+                android:icon="@drawable/decimater"
+                android:title="Decimate" />
+            <item
+                android:id="@+id/nav_smooth"
+                android:icon="@drawable/smoother1"
+                android:title="Smooth" />
+        </menu>
+    </item>
+
+</menu>

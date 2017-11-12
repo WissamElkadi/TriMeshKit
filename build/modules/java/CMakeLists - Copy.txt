@@ -1,0 +1,40 @@
+project(TriMeshKitJava)
+
+find_package(SWIG REQUIRED)
+#find_package(JNI REQUIRED)
+find_package(Java REQUIRED)
+include(UseSWIG)
+include(UseJava)
+
+set(CMAKE_SWIG_OUTDIR "${CMAKE_CURRENT_BINARY_DIR}/java")
+set_property(SOURCE ${ROOT_DIR}/modules/java/swig/TriMeshKit.i PROPERTY CPLUSPLUS ON)
+swig_add_module(TriMeshKit-jni java ${ROOT_DIR}/modules/java/swig/TriMeshKit.i)
+
+target_include_directories(TriMeshKit-jni
+                            PRIVATE 
+	                        ${CMAKE_CURRENT_SOURCE_DIR}
+                            ${JAVA_INCLUDE_PATH})
+
+target_link_libraries(TriMeshKit-jni ${TARGET_MESH_PROCESSING_LIB_NAME}
+                          ${TARGET_OPEN_MESH_CORE_LIB_NAME})
+							
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/classes")
+add_custom_command(TARGET TriMeshKit-jni POST_BUILD
+    COMMAND "${Java_JAVAC_EXECUTABLE}" -d classes java/*.java
+    COMMAND "${Java_JAR_EXECUTABLE}" -cfM TriMeshKit-jni.jar -C classes .
+    )
+# Store Path to native JAR in variable:
+set(TriMeshKit_JAR "${CMAKE_CURRENT_BINARY_DIR}/TriMeshKit-jni.jar")
+
+# add_jar(TriMeshKit_Java
+    # SOURCES "NativeInvoker.java"
+    # INCLUDE_JARS ${TriMeshKit_JAR})
+	
+# set(CMAKE_JAVA_COMPILE_FLAGS "-source" "1.8" "-target" "1.8")
+
+#installAndExportLib(${TARGET_TRI_MESH_KIT_JAVA_LIB_NAME})
+# ADD_CUSTOM_COMMAND(TARGET TARGET_TRI_MESH_KIT_JAVA_LIB_NAME POST_BUILD
+    # COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Native> ${CMAKE_CURRENT_BINARY_DIR})
+
+	
+	
