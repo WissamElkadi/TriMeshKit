@@ -6,14 +6,28 @@
 
 using namespace TriMeshKit::MeshProcessing;
 
-std::vector<float> TriMesh::getVerticesPoints()
-{
-    return mVerticesPoints;
-}
-
 TriMeshKit::MeshProcessing::TriMesh::TriMesh() :
     mIsDirty(true)
 {
+    for (auto& minCorr : mBoundingBox.at(0))
+    {
+        minCorr = std::numeric_limits<float>::max();
+    }
+
+    for (auto& maxCorr : mBoundingBox.at(1))
+    {
+        maxCorr = -std::numeric_limits<float>::max();
+    }
+
+    for (auto& centerCoord : mCenter)
+    {
+        centerCoord = 0.0f;
+    }
+}
+
+std::vector<float> TriMesh::getVerticesPoints()
+{
+    return mVerticesPoints;
 }
 
 std::vector<float> TriMeshKit::MeshProcessing::TriMesh::getVerticesNormals()
@@ -29,6 +43,11 @@ std::vector<int> TriMeshKit::MeshProcessing::TriMesh::getFacesIndices()
 std::array<float, 3> TriMeshKit::MeshProcessing::TriMesh::getCenter()
 {
     return mCenter;
+}
+
+std::array<std::array<float, 3>, 2> TriMeshKit::MeshProcessing::TriMesh::getBoundingBox()
+{
+    return mBoundingBox;
 }
 
 void TriMeshKit::MeshProcessing::TriMesh::updateVerticesNormals()
@@ -75,6 +94,21 @@ void TriMeshKit::MeshProcessing::TriMesh::refresh(bool _updateNormals /*= true*/
         auto vertexPoint = point(vh);
         center += vertexPoint;
 
+        if (vertexPoint[0] < mBoundingBox.at(0).at(0))
+            mBoundingBox.at(0).at(0) = vertexPoint[0];
+        else if((vertexPoint[0] > mBoundingBox.at(1).at(0)))
+            mBoundingBox.at(1).at(0) = vertexPoint[0];
+
+        if (vertexPoint[1] < mBoundingBox.at(0).at(1))
+            mBoundingBox.at(0).at(1) = vertexPoint[1];
+        else if(vertexPoint[0] > mBoundingBox.at(1).at(1))
+            mBoundingBox.at(1).at(1) = vertexPoint[1];
+
+        if (vertexPoint[2] < mBoundingBox.at(0).at(2))
+            mBoundingBox.at(0).at(2) = vertexPoint[2];
+        else if(vertexPoint[2] > mBoundingBox.at(1).at(2))
+            mBoundingBox.at(1).at(2) = vertexPoint[2];
+
         for (int i = 0; i < vertexPoint.size(); ++i)
         {
             mVerticesPoints.push_back(vertexPoint[i]);
@@ -87,10 +121,11 @@ void TriMeshKit::MeshProcessing::TriMesh::refresh(bool _updateNormals /*= true*/
         }
     }
 
-    center = center / n_vertices();
-    mCenter[0] = center[0];
-    mCenter[1] = center[1];
-    mCenter[2] = center[2];
+    auto min = mBoundingBox.at(0);
+    auto max = mBoundingBox.at(1);
+    mCenter[0] = float (min.at(0) + max.at(0)) / 2.0f;
+    mCenter[1] = float(min.at(1) + max.at(1)) / 2.0f;
+    mCenter[2] = float(min.at(2) + max.at(2)) / 2.0f;
 
     setDirty(false);
 }

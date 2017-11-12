@@ -12,6 +12,7 @@ using namespace TriMeshKit::MeshProcessing;
 
 bool TriMeshUtils::readMesh( TriMesh& _mesh, const std::string& _path ,bool _requestNormals)
 {
+	_mesh.setDirty(true);
     OpenMesh::IO::Options option;
 
     if (_requestNormals)

@@ -1,11 +1,13 @@
 #3rdparty Libs
 set(OPENMESH_ROOT ${ROOT_DIR}/3rdparty/open_mesh)
 set(EIGEN_ROOT ${ROOT_DIR}/3rdparty/eigen)
+set(MODULES_ROOT ${ROOT_DIR}/modules)
 
 # Libs Names
 set(TARGET_MESH_PROCESSING_LIB_NAME "TriMeshProcessing")
 set(TARGET_OPEN_MESH_CORE_LIB_NAME "OpenMeshCore")
 set(TARGET_TRI_MESH_KIT_LIB_NAME "TriMeshKit")
+set(TARGET_TRI_MESH_KIT_JAVA_LIB_NAME "TriMeshKit-java")
 
 # PACKAGES DIRECTORY
 set(TRIMESHKIT_INSTALL_DIRECTORY    ${ROOT_DIR}/install)

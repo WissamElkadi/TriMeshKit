@@ -19,17 +19,19 @@ namespace TriMeshKit
             std::vector<float> getVerticesNormals();
             std::vector<int> getFacesIndices();
             std::array<float, 3> getCenter();
+            std::array<std::array<float, 3>, 2> getBoundingBox();
             void updateVerticesNormals();
 
             void refresh(bool _updateNormals = true);
             void setDirty(bool _isDirty);
 
         private:
-            std::vector<float> mVerticesPoints;
-            std::vector<float> mVerticesNormals;
-            std::vector<int> mFacesIndices;
-            std::array<float, 3> mCenter;
-            bool mIsDirty;
+            std::vector<float>                   mVerticesPoints;
+            std::vector<float>                   mVerticesNormals;
+            std::vector<int>                     mFacesIndices;
+            std::array<float, 3>                 mCenter;
+            std::array<std::array<float, 3>, 2>  mBoundingBox;
+            bool                                 mIsDirty;
         };
     }
 }
