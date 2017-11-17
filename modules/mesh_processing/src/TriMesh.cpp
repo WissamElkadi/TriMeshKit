@@ -134,3 +134,8 @@ void TriMeshKit::MeshProcessing::TriMesh::setDirty(bool _isDirty)
 {
     mIsDirty = _isDirty;
 }
+
+bool TriMeshKit::MeshProcessing::TriMesh::isDirty()
+{
+    return mIsDirty;
+}

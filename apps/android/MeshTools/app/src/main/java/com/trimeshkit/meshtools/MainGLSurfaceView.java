@@ -9,6 +9,8 @@ import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
+import com.trimeshkit.meshprocessing.TriMesh;
+
 /**
  * Created by wahmed on 21/10/2017.
  */
@@ -103,9 +105,9 @@ public class MainGLSurfaceView extends GLSurfaceView {
         requestRender();
     }
 
-    public void loadMesh(MainMesh _mesh)
+    public void loadMesh(TriMesh _triMesh)
     {
-       mRenderer.loadMesh(_mesh);
+       mRenderer.loadMesh(_triMesh);
        requestRender();
     }
 }

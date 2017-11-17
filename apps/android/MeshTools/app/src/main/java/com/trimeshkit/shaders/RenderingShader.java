@@ -5,7 +5,7 @@ import android.content.Context;
 import android.opengl.GLES31;
 import android.opengl.Matrix;
 
-import com.trimeshkit.meshtools.MainMesh;
+import com.trimeshkit.meshprocessing.TriMesh;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,7 +20,7 @@ public class RenderingShader {
     protected Activity mContext;
 
     // Mesh
-    protected MainMesh mMesh;
+    protected TriMesh mTriMesh;
 
     // shader
     protected int mShaderProgram;
@@ -89,14 +89,14 @@ public class RenderingShader {
         GLES31.glClear(GLES31.GL_COLOR_BUFFER_BIT | GLES31.GL_DEPTH_BUFFER_BIT);
 
         GLES31.glEnableVertexAttribArray(mVertexHandle);
-        GLES31.glVertexAttribPointer(mVertexHandle, 3, GLES31.GL_FLOAT, false, 3 * 4, mMesh.getPoints());
+        GLES31.glVertexAttribPointer(mVertexHandle, 3, GLES31.GL_FLOAT, false, 3 * 4, mTriMesh.getVerticesPoints());
 
 //        GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, mBuffers[0]);
 //        GLES31.glEnableVertexAttribArray(mVertexHandle);
 //        GLES31.glVertexAttribPointer(mVertexHandle, 3, GLES31.GL_FLOAT, false, 0, 0);
 
         GLES31.glEnableVertexAttribArray(mNormalHandle);
-        GLES31.glVertexAttribPointer(mNormalHandle, 3, GLES31.GL_FLOAT, false, 3 * 4, mMesh.getNormals());
+        GLES31.glVertexAttribPointer(mNormalHandle, 3, GLES31.GL_FLOAT, false, 3 * 4, mTriMesh.getVerticesNormals());
 
         // GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, mBuffers[1]);
         // GLES31.glEnableVertexAttribArray(mNormalHandle);
@@ -114,7 +114,7 @@ public class RenderingShader {
 
         // Then, we issue the render call
         //GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, mBuffers[2]);
-        GLES31.glDrawElements(renderingMode, mMesh.getNumberOfFaces() * 3, GLES31.GL_UNSIGNED_INT, mMesh.getFacesVertexIndices());
+        GLES31.glDrawElements(renderingMode, mTriMesh.getNumberOfFaces() * 3, GLES31.GL_UNSIGNED_INT, mTriMesh.getFacesIndices());
 
         // Finally, we disable the vertex, normal arrays
         GLES31.glDisableVertexAttribArray(mNormalHandle);
@@ -136,7 +136,7 @@ public class RenderingShader {
     public void setRotationDelta(float deltaX, float deltaY) {
 
         float[] centerVector = new float[4];
-        float[] center = mMesh.getCenter();
+        float[] center = mTriMesh.getCenter();
         centerVector[0] = center[0];
         centerVector[1] = center[1];
         centerVector[2] = center[2];
@@ -171,18 +171,18 @@ public class RenderingShader {
         Matrix.perspectiveM(mProjectionMatrix, 0, 45.0f / _scaleFactor, mSurfaceAspectRatio, 0.1f, 30.0f);
     }
 
-    public void setMesh(MainMesh _mesh)
+    public void setMesh(TriMesh _mesh)
     {
-        mMesh = _mesh;
+        mTriMesh = _mesh;
 
-        float[] center = mMesh.getCenter();
+        float[] center = mTriMesh.getCenter();
         mCameraPosition[0] = center[0];
-        mCameraPosition[1] = center[1] + mMesh.getLargetLength() / 2;
-        mCameraPosition[2] = mMesh.getLargetLength() + center[2];
+        mCameraPosition[1] = center[1] + mTriMesh.getLargetLength() / 2;
+        mCameraPosition[2] = mTriMesh.getLargetLength() + center[2];
 
         mCameraDirection[0] = 0.0f;
-        mCameraDirection[1] = mMesh.getLargetLength() / 2;
-        mCameraDirection[2] = -mMesh.getLargetLength();
+        mCameraDirection[1] = mTriMesh.getLargetLength() / 2;
+        mCameraDirection[2] = -mTriMesh.getLargetLength();
 
         Matrix.setLookAtM(mModelViewMatrix, 0, mCameraPosition[0], mCameraPosition[1], mCameraPosition[2],
                 center[0], center[1], center[2], 0.0f, 1.0f, 0.0f);

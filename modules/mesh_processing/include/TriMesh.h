@@ -24,6 +24,7 @@ namespace TriMeshKit
 
             void refresh(bool _updateNormals = true);
             void setDirty(bool _isDirty);
+			bool isDirty();
 
         private:
             std::vector<float>                   mVerticesPoints;

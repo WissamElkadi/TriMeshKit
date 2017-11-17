@@ -52,17 +52,17 @@ public class NormalsRenderingShader extends RenderingShader{
         GLES31.glClear(GLES31.GL_COLOR_BUFFER_BIT | GLES31.GL_DEPTH_BUFFER_BIT);
 
         GLES31.glEnableVertexAttribArray(mVertexHandle);
-        GLES31.glVertexAttribPointer(mVertexHandle, 3, GLES31.GL_FLOAT, false, 3 * 4, mMesh.getPoints());
+        GLES31.glVertexAttribPointer(mVertexHandle, 3, GLES31.GL_FLOAT, false, 3 * 4, mTriMesh.getVerticesPoints());
 
         GLES31.glEnableVertexAttribArray(mNormalHandle);
-        GLES31.glVertexAttribPointer(mNormalHandle, 3, GLES31.GL_FLOAT, false, 3 * 4, mMesh.getNormals());
+        GLES31.glVertexAttribPointer(mNormalHandle, 3, GLES31.GL_FLOAT, false, 3 * 4, mTriMesh.getVerticesNormals());
 
         // Pass the projection matrix to OpenGL
         GLES31.glUniformMatrix4fv(mProjectionMatrixHandle, 1, false, mProjectionMatrix, 0);
         GLES31.glUniformMatrix4fv(mModelViewMatrixHandle, 1, false, mModelViewMatrix, 0);
 
         // Then, we issue the render call
-        GLES31.glDrawElements(GLES31.GL_TRIANGLES, mMesh.getNumberOfFaces() * 3, GLES31.GL_UNSIGNED_INT, mMesh.getFacesVertexIndices());
+        GLES31.glDrawElements(GLES31.GL_TRIANGLES, mTriMesh.getNumberOfFaces() * 3, GLES31.GL_UNSIGNED_INT, mTriMesh.getFacesIndices());
 
         // Finally, we disable the vertex, normal arrays
         GLES31.glDisableVertexAttribArray(mNormalHandle);

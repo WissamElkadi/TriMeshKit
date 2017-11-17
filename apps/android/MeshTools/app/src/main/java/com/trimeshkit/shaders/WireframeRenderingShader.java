@@ -3,10 +3,8 @@ package com.trimeshkit.shaders;
 import android.content.Context;
 import android.opengl.GLES31;
 import android.opengl.GLES31Ext;
-import android.opengl.Matrix;
 import android.util.DisplayMetrics;
 
-import com.trimeshkit.meshtools.MainMesh;
 import com.trimeshkit.meshtools.R;
 
 /**
@@ -68,15 +66,15 @@ public class WireframeRenderingShader extends RenderingShader{
 //            GLES31.glGenBuffers(3, mBuffers, 0);
 //
 //            GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, mBuffers[0]);
-//            Buffer points = mMesh.getPoints();
+//            Buffer points = mTriMesh.getPoints();
 //            GLES31.glBufferData(GLES31.GL_ARRAY_BUFFER, points.capacity() * 4, points, GLES31.GL_STATIC_DRAW);
 //
 //            GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, mBuffers[1]);
-//            Buffer normals = mMesh.getNormals();
+//            Buffer normals = mTriMesh.getNormals();
 //            GLES31.glBufferData(GLES31.GL_ARRAY_BUFFER, normals.capacity() * 4, normals, GLES31.GL_STATIC_DRAW);
 //
 //            GLES31.glBindBuffer(GLES31.GL_ELEMENT_ARRAY_BUFFER, mBuffers[2]);
-//            Buffer faces = mMesh.getFacesVertexIndices();
+//            Buffer faces = mTriMesh.getFacesVertexIndices();
 //            GLES31.glBufferData(GLES31.GL_ELEMENT_ARRAY_BUFFER, faces.capacity() * 4, faces, GLES31.GL_STATIC_DRAW);
 //
 //            // IMPORTANT: Unbind from the buffer when we're done with it.

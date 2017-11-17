@@ -4,7 +4,6 @@ import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.ConfigurationInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,15 +21,23 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
+import com.trimeshkit.meshprocessing.TriMesh;
+import com.trimeshkit.meshprocessing.TriMeshUtils;
+
 public class MainSurfaceActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener , View.OnClickListener
         {
 
+            // Used to load the 'MeshTools' library on application startup.
+            static {
+                System.loadLibrary("TriMeshKit-JNI");
+            }
+
+            private TriMesh mTriMesh;
     private MainGLSurfaceView mGLView;
     private Boolean mIsFABOpen = false;
     private FloatingActionButton mRenderingFAAB,mSolidRenderingFAB,mSolidWireframeRenderingFAB, mWireframeRenderingFAB, mNormalRenderingFAB, mPointRenderingFAB;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
-            private MainMesh mMesh;
 
     private static final int PICK_MESH_REQUEST = 1;
     @Override
@@ -243,7 +250,6 @@ public class MainSurfaceActivity extends AppCompatActivity
             private class LoadMeshTask extends AsyncTask<String, Integer, Boolean> {
 
                 private MainSurfaceActivity activity;
-                private String meshPath;
                 private ProgressDialog progressBar;
 
                 public LoadMeshTask(MainSurfaceActivity context) {
@@ -263,13 +269,26 @@ public class MainSurfaceActivity extends AppCompatActivity
                 }
 
                 protected Boolean doInBackground(String... parms) {
-                   activity.mMesh = new MainMesh(parms[0]);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            activity.mGLView.loadMesh(activity.mMesh);
-                        }
-                    });
+                    activity.mTriMesh = new TriMesh();
+                    boolean loaded = TriMeshUtils.readMesh(activity.mTriMesh, parms[0], true);
+
+                    if(loaded) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                activity.mGLView.loadMesh(activity.mTriMesh);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(activity, "Couldn't Load mesh", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
                     return true;
                 }
 

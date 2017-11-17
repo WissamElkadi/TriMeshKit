@@ -3,6 +3,7 @@ package com.trimeshkit.meshtools;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 
+import com.trimeshkit.meshprocessing.TriMesh;
 import com.trimeshkit.shaders.NormalsRenderingShader;
 import com.trimeshkit.shaders.PointsRenderingShader;
 import com.trimeshkit.shaders.SoildWireframeRenderingShader;
@@ -103,15 +104,15 @@ public class MainGLRenderer implements GLSurfaceView.Renderer {
         mCurrentRenderingModeType = _renderingTypeMode;
     }
 
-    public void loadMesh(MainMesh _mesh)
+    public void loadMesh(TriMesh _triMesh)
     {
         mIsRendering = false;
 
-        mSoildWireframeRenderingShader.setMesh(_mesh);
-        mSolidRenderingShader.setMesh(_mesh);
-        mWireframeRenderingShader.setMesh(_mesh);
-        mNormalsRenderingShader.setMesh(_mesh);
-        mPointsRenderingShader.setMesh(_mesh);
+        mSoildWireframeRenderingShader.setMesh(_triMesh);
+        mSolidRenderingShader.setMesh(_triMesh);
+        mWireframeRenderingShader.setMesh(_triMesh);
+        mNormalsRenderingShader.setMesh(_triMesh);
+        mPointsRenderingShader.setMesh(_triMesh);
 
         mIsRendering = true;
     }
