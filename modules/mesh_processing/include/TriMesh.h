@@ -21,10 +21,11 @@ namespace TriMeshKit
             std::array<float, 3> getCenter();
             std::array<std::array<float, 3>, 2> getBoundingBox();
             void updateVerticesNormals();
+            void smooth();
 
             void refresh(bool _updateNormals = true);
             void setDirty(bool _isDirty);
-			bool isDirty();
+            bool isDirty();
 
         private:
             std::vector<float>                   mVerticesPoints;

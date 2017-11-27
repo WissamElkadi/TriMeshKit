@@ -60,6 +60,7 @@ public class TriMesh
     public native void refresh(boolean _updateNormals);
     public native void setDirty(boolean _isDirty);
 	public native boolean isDirty();
+	public native void smooth();
 	
 	private native void initialise();
     private native float[] getInternalVerticesPoints();

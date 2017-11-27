@@ -201,6 +201,13 @@ JNIEXPORT jboolean JNICALL Java_com_trimeshkit_meshprocessing_TriMesh_isDirty
     return inst->isDirty();
 }
   
+
+JNIEXPORT void JNICALL Java_com_trimeshkit_meshprocessing_TriMesh_smooth
+(JNIEnv* _env, jobject _obj)
+{
+    TriMesh *inst = getHandle<TriMesh>(_env, _obj);
+    return inst->smooth();
+}  
   
 /*
  * Class:     com_trimeshkit_meshprocessing_TriMesh

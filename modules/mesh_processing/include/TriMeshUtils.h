@@ -7,16 +7,16 @@
 
 namespace TriMeshKit
 {
-	namespace MeshProcessing
-	{
-		class TriMesh;
-		class TriMeshUtils
-		{ 
-		public:
-			static bool readMesh (TriMesh& _mesh, const std::string& _path, bool _requestNormals = true);
-			static void writeMesh(TriMesh& _mesh, const std::string& _path, bool _binary = true);
-		};
-	}
+    namespace MeshProcessing
+    {
+        class TriMesh;
+        class TriMeshUtils
+        { 
+        public:
+            static bool readMesh (TriMesh& _mesh, const std::string& _path, bool _requestNormals = true);
+            static void writeMesh(TriMesh& _mesh, const std::string& _path, bool _binary = true);
+        };
+    }
 }
 
 #endif // MESH_PROCESSING_TRIMESHUTILS_H

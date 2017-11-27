@@ -173,7 +173,8 @@ public class MainSurfaceActivity extends AppCompatActivity
         } else if (id == R.id.nav_decimate) {
 
         } else if (id == R.id.nav_smooth) {
-
+            SmoothMeshTask smoothMeshTask = new SmoothMeshTask(this);
+            smoothMeshTask.execute();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -247,6 +248,39 @@ public class MainSurfaceActivity extends AppCompatActivity
             }
         }
     }
+
+            private class SmoothMeshTask extends AsyncTask<Void, Integer, Boolean> {
+
+                private MainSurfaceActivity activity;
+                private ProgressDialog progressBar;
+
+                public SmoothMeshTask(MainSurfaceActivity context) {
+
+                    activity = context;
+                    progressBar = new ProgressDialog(context);
+                    progressBar.setMessage("Smoothing Mesh ...");
+                    progressBar.setIndeterminate(true);
+                    progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                }
+
+                protected void onPreExecute() {
+                    progressBar.show();
+                }
+
+                protected void onProgressUpdate(Integer... progress) {
+                }
+
+                protected Boolean doInBackground(Void... parms) {
+                    activity.mTriMesh.smooth();
+
+                    return true;
+                }
+
+                protected void onPostExecute(Boolean result) {
+                    progressBar.dismiss();
+                }
+            }
+
             private class LoadMeshTask extends AsyncTask<String, Integer, Boolean> {
 
                 private MainSurfaceActivity activity;

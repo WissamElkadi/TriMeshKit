@@ -12,7 +12,7 @@ using namespace TriMeshKit::MeshProcessing;
 
 bool TriMeshUtils::readMesh( TriMesh& _mesh, const std::string& _path ,bool _requestNormals)
 {
-	_mesh.setDirty(true);
+    _mesh.setDirty(true);
     OpenMesh::IO::Options option;
 
     if (_requestNormals)
@@ -51,8 +51,8 @@ bool TriMeshUtils::readMesh( TriMesh& _mesh, const std::string& _path ,bool _req
 
 void TriMeshUtils::writeMesh( TriMesh& _mesh, const std::string& _path, bool _binary /*= true*/ )
 {
-	if(_binary)
-		OpenMesh::IO::write_mesh(_mesh, _path, OpenMesh::IO::Options::Binary);
-	else
-		OpenMesh::IO::write_mesh(_mesh, _path);
+    if(_binary)
+        OpenMesh::IO::write_mesh(_mesh, _path, OpenMesh::IO::Options::Binary);
+    else
+        OpenMesh::IO::write_mesh(_mesh, _path);
 }

@@ -19,7 +19,7 @@ set (directories
 add_definitions(
     -D_USE_MATH_DEFINES -DNOMINMAX
     -D_CRT_SECURE_NO_WARNINGS
-	)
+    )
 
 # collect all header and source files
 append_files (LIB_INC "*.hh" ${directories})
@@ -31,7 +31,7 @@ append_files (LIB_SRC "*.cc" ${directories})
 if(TRIMESHKIT_PLATFORM_ANDROID)
     add_library(${TARGET_OPEN_MESH_CORE_LIB_NAME} SHARED ${LIB_SRC} ${LIB_INC})
 elseif(TRIMESHKIT_PLATFORM_WINDOWS)
-    add_library(${TARGET_OPEN_MESH_CORE_LIB_NAME} SHARED ${LIB_SRC} ${LIB_INC})
+    add_library(${TARGET_OPEN_MESH_CORE_LIB_NAME}  ${LIB_SRC} ${LIB_INC})
 endif()
 
 target_include_directories(${TARGET_OPEN_MESH_CORE_LIB_NAME}

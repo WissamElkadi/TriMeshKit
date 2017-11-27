@@ -3,6 +3,8 @@
 #include <OpenMesh/Core/IO/MeshIO.hh>
 
 #include "TriMesh.h"
+#include "TriMeshLinearSystem.h"
+#include "LaplaceBeltramiOperator.h"
 
 using namespace TriMeshKit::MeshProcessing;
 
@@ -63,6 +65,14 @@ void TriMeshKit::MeshProcessing::TriMesh::updateVerticesNormals()
 
     // dispose the face normals, as we don't need them anymore
     release_face_normals();
+}
+
+void TriMeshKit::MeshProcessing::TriMesh::smooth()
+{
+    TriMeshLinearSystem triMeshLinearSystem(*this, DifferentialOperator::LAPLACIAN);
+    triMeshLinearSystem.addZeroRightHandSide();
+    triMeshLinearSystem.solve();
+    refresh();
 }
 
 void TriMeshKit::MeshProcessing::TriMesh::refresh(bool _updateNormals /*= true*/)
