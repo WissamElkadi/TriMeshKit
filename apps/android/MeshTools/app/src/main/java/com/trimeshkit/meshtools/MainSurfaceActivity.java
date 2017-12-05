@@ -271,7 +271,7 @@ public class MainSurfaceActivity extends AppCompatActivity
                 }
 
                 protected Boolean doInBackground(Void... parms) {
-                    activity.mTriMesh.smooth();
+                    activity.mTriMesh.smoothMesh();
 
                     return true;
                 }

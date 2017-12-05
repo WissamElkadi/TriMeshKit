@@ -10,26 +10,42 @@ namespace TriMeshKit
     {
         class TriMesh;
 
-        enum DifferentialOperator
+        enum MatrixOperator
         {
+            ZEROS,
+            IDENTITY,
             LAPLACIAN
         };
+
+        enum OperationType
+        {
+            INIT,
+            ADD,
+            SUB
+        };
+
         class TriMeshLinearSystem
         {
         public:
-            TriMeshLinearSystem(TriMesh& _triMesh, DifferentialOperator _operator);
+            TriMeshLinearSystem(TriMesh& _triMesh);
             void solve();
-            void addZeroRightHandSide();
+            void addToRightMatrix(MatrixOperator _matrixOperator, double factor = 1.0,  OperationType _operationType = ADD);
+            void addToLeftMatrix(MatrixOperator _matrixOperator, double factor = 1.0, OperationType _operationType = ADD);
 
         private:
             void build();
 
         private:
-            TriMesh&                                     mTriMesh;
-            DifferentialOperator                         mDifferentialOperator;
-            Eigen::SparseMatrix<float>                   mLeftMatrix;
-            Eigen::Matrix<float, Eigen::Dynamic, 3>      mRightMatrix;
-            Eigen::SparseLU<Eigen::SparseMatrix<float>>  mSparseSolver;
+            TriMesh&                                               mTriMesh;
+            Eigen::SparseMatrix<double>                            mLeftMatrix;
+            Eigen::Matrix<double, Eigen::Dynamic, 3>               mRightMatrix;
+            Eigen::SparseMatrix<double>                            mLaplaceMatrix;
+            Eigen::Matrix<double, Eigen::Dynamic, 3>               mPointsMatrix;
+            Eigen::Matrix<double, Eigen::Dynamic, 3>               mDiffrentialPointsMatrix;
+
+            //Eigen::SparseLU<Eigen::SparseMatrix<double>>           mSparseSolver;
+            //Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>      mSparseSolver;
+            Eigen::SimplicialCholesky<Eigen::SparseMatrix<double>>  mSparseSolver;
         };//TriMeshLinearSystem
 
     } //MeshProcessing
