@@ -33,9 +33,9 @@ macro (installAndExportLib libName)
     	)
     
     add_custom_command(TARGET  ${libName} POST_BUILD
-                       DEPENDS "${ROOT_DIR}/bin/${SELECTED_PLATFORM}/${TARGET_ARCH}/$<TARGET_FILE_NAME:${TARGET_OPEN_MESH_CORE_LIB_NAME}>"
+                       DEPENDS "${ROOT_DIR}/bin/${SELECTED_PLATFORM}/${CMAKE_BUILD_TYPE}/${TARGET_ARCH}/$<TARGET_FILE_NAME:${libName}>"
                        COMMAND ${CMAKE_COMMAND} -E copy
                        $<TARGET_FILE:${libName}>
-                       ${ROOT_DIR}/bin/${SELECTED_PLATFORM}/${TARGET_ARCH}/$<TARGET_FILE_NAME:${libName}>
+                       ${ROOT_DIR}/bin/${SELECTED_PLATFORM}/${CMAKE_BUILD_TYPE}/${TARGET_ARCH}/$<TARGET_FILE_NAME:${libName}>
     				   )
 endmacro ()
