@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 def EXTERNAL_LIB_DIR = '../../../../bin/android'
 android {
+    signingConfigs {
+    }
     compileSdkVersion 25
     buildToolsVersion '25.0.3'
     defaultConfig {
@@ -12,14 +14,23 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            debuggable true
+        }
     }
-
-    sourceSets.main {
-        jni.srcDirs = []
-        jniLibs.srcDir "$EXTERNAL_LIB_DIR"
+    sourceSets {
+        main {
+            jni.srcDirs = []
+        }
+        release {
+            jniLibs.srcDir "$EXTERNAL_LIB_DIR/Release"
+        }
+        debug{
+            jniLibs.srcDir "$EXTERNAL_LIB_DIR/Debug"
+        }
     }
 }
 

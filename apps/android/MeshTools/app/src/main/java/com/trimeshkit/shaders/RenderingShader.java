@@ -46,47 +46,17 @@ public class RenderingShader {
 
 
     // Motion
-    public  float mSurfaceAspectRatio;
+    public float mSurfaceAspectRatio;
 
-    public RenderingShader(Context _context)
-    {
+    public RenderingShader(Context _context) {
         mContext = (Activity) _context;
     }
 
     public void initShader() {
-        // Set the background frame color
-        GLES31.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        GLES31.glClearDepthf(1.0f);
-
-        GLES31.glEnable(GLES31.GL_CULL_FACE);
-        GLES31.glCullFace(GLES31.GL_BACK);
-        GLES31.glFrontFace(GLES31.GL_CCW);
-        GLES31.glEnable(GLES31.GL_DEPTH_TEST);
     }
 
-    protected String readShaderSourceCode(int rawFileIndex) {
-        InputStream shaderInputStream = mContext.getResources().openRawResource(rawFileIndex);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        byte buf[] = new byte[1024];
-        int len;
-        try {
-            while ((len = shaderInputStream.read(buf)) != -1) {
-                outputStream.write(buf, 0, len);
-            }
-            outputStream.close();
-            shaderInputStream.close();
-        } catch (IOException e) {
-
-        }
-        return outputStream.toString();
-    }
-
-
-    protected void render(int renderingMode)
-    {
+    protected void render(int renderingMode) {
         // Redraw background color
-        GLES31.glClear(GLES31.GL_COLOR_BUFFER_BIT | GLES31.GL_DEPTH_BUFFER_BIT);
 
         GLES31.glEnableVertexAttribArray(mVertexHandle);
         GLES31.glVertexAttribPointer(mVertexHandle, 3, GLES31.GL_FLOAT, false, 3 * 4, mTriMesh.getVerticesPoints());
@@ -124,8 +94,7 @@ public class RenderingShader {
         ShaderUtils.checkGLError("Rendering of the 3D mesh failed");
     }
 
-    public void updateViewPortAndProjection(int width, int height)
-    {
+    public void updateViewPortAndProjection(int width, int height) {
         GLES31.glViewport(0, 0, width, height);
         mSurfaceAspectRatio = (float) width / height;
 
@@ -150,7 +119,7 @@ public class RenderingShader {
         float[] reversedTranslationMatrix = new float[16];
 
         Matrix.setIdentityM(translationMatrix, 0);
-        Matrix.translateM(translationMatrix,0, -centerVector[0], -centerVector[1], -centerVector[2]);
+        Matrix.translateM(translationMatrix, 0, -centerVector[0], -centerVector[1], -centerVector[2]);
 
         Matrix.setIdentityM(rotationMatrix, 0);
         Matrix.rotateM(rotationMatrix, 0, deltaX, 0.0f, 1.0f, 0.0f);
@@ -166,13 +135,11 @@ public class RenderingShader {
         Matrix.multiplyMM(mModelViewMatrix, 0, reversedTranslationMatrix, 0, mModelViewMatrix, 0);
     }
 
-    public void setScaleFactor(float _scaleFactor)
-    {
+    public void setScaleFactor(float _scaleFactor) {
         Matrix.perspectiveM(mProjectionMatrix, 0, 45.0f / _scaleFactor, mSurfaceAspectRatio, 0.1f, 30.0f);
     }
 
-    public void setMesh(TriMesh _mesh)
-    {
+    public void setMesh(TriMesh _mesh) {
         mTriMesh = _mesh;
 
         float[] center = mTriMesh.getCenter();

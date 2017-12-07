@@ -23,29 +23,34 @@ import android.widget.Toast;
 
 import com.trimeshkit.meshprocessing.TriMesh;
 import com.trimeshkit.meshprocessing.TriMeshUtils;
+import com.trimeshkit.state.ApplicationState;
+
+import java.util.ArrayList;
 
 public class MainSurfaceActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener , View.OnClickListener
-        {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
-            // Used to load the 'MeshTools' library on application startup.
-            static {
-                System.loadLibrary("TriMeshKit-JNI");
-            }
+    // Used to load the 'MeshTools' library on application startup.
+    static {
+        System.loadLibrary("TriMeshKit-JNI");
+    }
 
-            private TriMesh mTriMesh;
+    private TriMesh mTriMesh;
     private MainGLSurfaceView mGLView;
     private Boolean mIsFABOpen = false;
-    private FloatingActionButton mRenderingFAAB,mSolidRenderingFAB,mSolidWireframeRenderingFAB, mWireframeRenderingFAB, mNormalRenderingFAB, mPointRenderingFAB;
-    private Animation fab_open,fab_close,rotate_forward,rotate_backward;
+    private FloatingActionButton mRenderingFAAB, mSolidRenderingFAB, mSolidWireframeRenderingFAB, mWireframeRenderingFAB, mNormalRenderingFAB, mPointRenderingFAB;
+    private Animation fab_open, fab_close, rotate_forward, rotate_backward;
 
     private static final int PICK_MESH_REQUEST = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Apply screen orientation
-      //  setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //  setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+        ApplicationState.setApplicationState(ApplicationState.ApplicationStateEnum.GENERAL);
 
         setContentView(R.layout.main_layout);
 
@@ -86,19 +91,18 @@ public class MainSurfaceActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-
         /// FAB
-        mRenderingFAAB = (FloatingActionButton)findViewById(R.id.renderingFAB);
-        mSolidRenderingFAB = (FloatingActionButton)findViewById(R.id.solidRenderingFAB);
-        mSolidWireframeRenderingFAB = (FloatingActionButton)findViewById(R.id.solidWireframeRenderingFAB);
-        mWireframeRenderingFAB = (FloatingActionButton)findViewById(R.id.wireframeRenderingFAB);
-        mNormalRenderingFAB= (FloatingActionButton)findViewById(R.id.normalRenderingFAB);
-        mPointRenderingFAB= (FloatingActionButton)findViewById(R.id.pointRenderingFAB);
+        mRenderingFAAB = (FloatingActionButton) findViewById(R.id.renderingFAB);
+        mSolidRenderingFAB = (FloatingActionButton) findViewById(R.id.solidRenderingFAB);
+        mSolidWireframeRenderingFAB = (FloatingActionButton) findViewById(R.id.solidWireframeRenderingFAB);
+        mWireframeRenderingFAB = (FloatingActionButton) findViewById(R.id.wireframeRenderingFAB);
+        mNormalRenderingFAB = (FloatingActionButton) findViewById(R.id.normalRenderingFAB);
+        mPointRenderingFAB = (FloatingActionButton) findViewById(R.id.pointRenderingFAB);
 
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
-        fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
-        rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward);
-        rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_backward);
+        fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+        rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_forward);
+        rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_backward);
 
         mRenderingFAAB.setOnClickListener(this);
         mSolidRenderingFAB.setOnClickListener(this);
@@ -109,15 +113,13 @@ public class MainSurfaceActivity extends AppCompatActivity
     }
 
     @Override
-    protected  void onResume()
-    {
+    protected void onResume() {
         super.onResume();
         mGLView.onResume();
     }
 
     @Override
-    protected  void onPause()
-    {
+    protected void onPause() {
         super.onPause();
         mGLView.onPause();
     }
@@ -165,15 +167,16 @@ public class MainSurfaceActivity extends AppCompatActivity
             intent.setType("file/*");
             startActivityForResult(intent, PICK_MESH_REQUEST);
         } else if (id == R.id.nav_export_mesh) {
-
+            ApplicationState.setApplicationState(ApplicationState.ApplicationStateEnum.GENERAL);
         } else if (id == R.id.nav_sketch_modeling) {
-
+            ApplicationState.setApplicationState(ApplicationState.ApplicationStateEnum.SKETCH);
         } else if (id == R.id.nav_deformation) {
 
         } else if (id == R.id.nav_decimate) {
 
         } else if (id == R.id.nav_smooth) {
-
+            SmoothMeshTask smoothMeshTask = new SmoothMeshTask(this);
+            smoothMeshTask.execute();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -182,33 +185,50 @@ public class MainSurfaceActivity extends AppCompatActivity
     }
 
     @Override
-    public void onClick(View v)
-    {
+    public void onClick(View v) {
         int id = v.getId();
-        switch (id){
+        switch (id) {
             case R.id.renderingFAB:
                 animateFAB();
                 break;
             case R.id.solidRenderingFAB:
-                mGLView.changeRenderingType(Definations.RenderingModeType.SOLID);
+                if (ApplicationState.getApplicationState() == ApplicationState.ApplicationStateEnum.GENERAL)
+                    mGLView.changeRenderingType(Definations.RenderingModeType.SOLID);
+                else if (ApplicationState.getApplicationState() == ApplicationState.ApplicationStateEnum.SKETCH)
+                    mGLView.changeSketchType(Definations.SketchModeType.BOUNDARY);
                 break;
             case R.id.solidWireframeRenderingFAB:
-                mGLView.changeRenderingType(Definations.RenderingModeType.SOLID_WIREFRAME);
+                if (ApplicationState.getApplicationState() == ApplicationState.ApplicationStateEnum.GENERAL)
+                    mGLView.changeRenderingType(Definations.RenderingModeType.SOLID_WIREFRAME);
+                else if (ApplicationState.getApplicationState() == ApplicationState.ApplicationStateEnum.SKETCH)
+                    mGLView.changeSketchType(Definations.SketchModeType.FLAT);
                 break;
             case R.id.wireframeRenderingFAB:
-                mGLView.changeRenderingType(Definations.RenderingModeType.WIREFRAME);
+                if (ApplicationState.getApplicationState() == ApplicationState.ApplicationStateEnum.GENERAL)
+                    mGLView.changeRenderingType(Definations.RenderingModeType.WIREFRAME);
+                else if (ApplicationState.getApplicationState() == ApplicationState.ApplicationStateEnum.SKETCH) {
+                    ArrayList<Float> boundrayList = mGLView.getBoundryPoits();
+                    TriangulatePointsTask triangulatePointsTask = new TriangulatePointsTask(this);
+                    triangulatePointsTask.execute(boundrayList);
+                }
                 break;
             case R.id.pointRenderingFAB:
-                mGLView.changeRenderingType(Definations.RenderingModeType.POINTS);
+                if (ApplicationState.getApplicationState() == ApplicationState.ApplicationStateEnum.GENERAL)
+                    mGLView.changeRenderingType(Definations.RenderingModeType.POINTS);
+                else if (ApplicationState.getApplicationState() == ApplicationState.ApplicationStateEnum.SKETCH)
+                    mGLView.changeSketchType(Definations.SketchModeType.CONVEX);
                 break;
             case R.id.normalRenderingFAB:
-                mGLView.changeRenderingType(Definations.RenderingModeType.NORMALS);
+                if (ApplicationState.getApplicationState() == ApplicationState.ApplicationStateEnum.GENERAL)
+                    mGLView.changeRenderingType(Definations.RenderingModeType.NORMALS);
+                else if (ApplicationState.getApplicationState() == ApplicationState.ApplicationStateEnum.SKETCH)
+                    mGLView.changeSketchType(Definations.SketchModeType.CONCAVE);
                 break;
         }
     }
 
-    public void animateFAB(){
-        if(mIsFABOpen){
+    public void animateFAB() {
+        if (mIsFABOpen) {
             mRenderingFAAB.startAnimation(rotate_backward);
             mSolidRenderingFAB.startAnimation(fab_close);
             mSolidWireframeRenderingFAB.startAnimation(fab_close);
@@ -247,53 +267,134 @@ public class MainSurfaceActivity extends AppCompatActivity
             }
         }
     }
-            private class LoadMeshTask extends AsyncTask<String, Integer, Boolean> {
 
-                private MainSurfaceActivity activity;
-                private ProgressDialog progressBar;
+    private class SmoothMeshTask extends AsyncTask<Void, Integer, Boolean> {
 
-                public LoadMeshTask(MainSurfaceActivity context) {
+        private MainSurfaceActivity activity;
+        private ProgressDialog progressBar;
 
-                    activity = context;
-                    progressBar = new ProgressDialog(context);
-                    progressBar.setMessage("Loading Mesh ...");
-                    progressBar.setIndeterminate(true);
-                    progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                }
+        public SmoothMeshTask(MainSurfaceActivity context) {
 
-                protected void onPreExecute() {
-                    progressBar.show();
-                }
+            activity = context;
+            progressBar = new ProgressDialog(context);
+            progressBar.setMessage("Smoothing Mesh ...");
+            progressBar.setIndeterminate(true);
+            progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        }
 
-                protected void onProgressUpdate(Integer... progress) {
-                }
+        protected void onPreExecute() {
+            progressBar.show();
+        }
 
-                protected Boolean doInBackground(String... parms) {
-                    activity.mTriMesh = new TriMesh();
-                    boolean loaded = TriMeshUtils.readMesh(activity.mTriMesh, parms[0], true);
+        protected void onProgressUpdate(Integer... progress) {
+        }
 
-                    if(loaded) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                activity.mGLView.loadMesh(activity.mTriMesh);
-                            }
-                        });
+        protected Boolean doInBackground(Void... parms) {
+            activity.mTriMesh.smoothMesh();
+
+            return true;
+        }
+
+        protected void onPostExecute(Boolean result) {
+            progressBar.dismiss();
+        }
+    }
+
+    private class LoadMeshTask extends AsyncTask<String, Integer, Boolean> {
+
+        private MainSurfaceActivity activity;
+        private ProgressDialog progressBar;
+
+        public LoadMeshTask(MainSurfaceActivity context) {
+
+            activity = context;
+            progressBar = new ProgressDialog(context);
+            progressBar.setMessage("Loading Mesh ...");
+            progressBar.setIndeterminate(true);
+            progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        }
+
+        protected void onPreExecute() {
+            progressBar.show();
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+        }
+
+        protected Boolean doInBackground(String... parms) {
+            activity.mTriMesh = new TriMesh();
+            boolean loaded = TriMeshUtils.readMesh(activity.mTriMesh, parms[0], true);
+
+            if (loaded) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        activity.mGLView.loadMesh(activity.mTriMesh);
                     }
-                    else
-                    {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(activity, "Couldn't Load mesh", Toast.LENGTH_LONG).show();
-                            }
-                        });
+                });
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(activity, "Couldn't Load mesh", Toast.LENGTH_LONG).show();
                     }
-                    return true;
-                }
-
-                protected void onPostExecute(Boolean result) {
-                    progressBar.dismiss();
-                }
+                });
             }
+            return true;
+        }
+
+        protected void onPostExecute(Boolean result) {
+            progressBar.dismiss();
+        }
+    }
+
+    private class TriangulatePointsTask extends AsyncTask<ArrayList<Float>, Integer, Boolean> {
+
+        private MainSurfaceActivity activity;
+        private ProgressDialog progressBar;
+
+        public TriangulatePointsTask(MainSurfaceActivity context) {
+
+            activity = context;
+            progressBar = new ProgressDialog(context);
+            progressBar.setMessage("triangulate ...");
+            progressBar.setIndeterminate(true);
+            progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        }
+
+        protected void onPreExecute() {
+            progressBar.show();
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+        }
+
+        protected Boolean doInBackground(ArrayList<Float>... parms) {
+            activity.mTriMesh = new TriMesh();
+
+            double[] doubleArray = new double[parms[0].size()];
+            int i = 0;
+
+            for (Float f : parms[0]) {
+                doubleArray[i++] = (f != null ? f : Float.NaN);
+            }
+
+            TriMeshUtils.triangulate(activity.mTriMesh, doubleArray);
+
+            ApplicationState.setApplicationState(ApplicationState.ApplicationStateEnum.GENERAL);
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    activity.mGLView.loadMesh(activity.mTriMesh);
+                }
+            });
+
+            return true;
+        }
+
+        protected void onPostExecute(Boolean result) {
+            progressBar.dismiss();
+        }
+    }
 }

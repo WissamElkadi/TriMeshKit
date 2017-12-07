@@ -4,13 +4,14 @@ import android.content.Context;
 import android.opengl.GLES31;
 import android.opengl.GLES31Ext;
 import android.util.DisplayMetrics;
+
 import com.trimeshkit.meshtools.R;
 
 /**
  * Created by wahmed on 07/11/2017.
  */
 
-public class SoildWireframeRenderingShader extends RenderingShader{
+public class SoildWireframeRenderingShader extends RenderingShader {
 
 
     private int mScreenSizeHandle;
@@ -18,21 +19,19 @@ public class SoildWireframeRenderingShader extends RenderingShader{
     private float[] mScreenSize = new float[2];
 
 
-    public SoildWireframeRenderingShader(Context _context)
-    {
+    public SoildWireframeRenderingShader(Context _context) {
         super(_context);
     }
 
-    public void initShader()
-    {
+    public void initShader() {
         super.initShader();
 
         // load vertex shader
-        mVertexShader = ShaderUtils.loadShader(GLES31.GL_VERTEX_SHADER, readShaderSourceCode(R.raw.surface_solid_wirframe_vertex));
+        mVertexShader = ShaderUtils.loadShader(GLES31.GL_VERTEX_SHADER, ShaderUtils.readShaderSourceCode(mContext, R.raw.surface_solid_wirframe_vertex));
         //load Geometry shader
-        mGeometryShader = ShaderUtils.loadShader(GLES31Ext.GL_GEOMETRY_SHADER_EXT, readShaderSourceCode(R.raw.surface_solid_wirframe_geometry));
+        mGeometryShader = ShaderUtils.loadShader(GLES31Ext.GL_GEOMETRY_SHADER_EXT, ShaderUtils.readShaderSourceCode(mContext, R.raw.surface_solid_wirframe_geometry));
         // load fragment shader
-        mFragmentShader = ShaderUtils.loadShader(GLES31.GL_FRAGMENT_SHADER, readShaderSourceCode(R.raw.surface_solid_wirframe_fragment));
+        mFragmentShader = ShaderUtils.loadShader(GLES31.GL_FRAGMENT_SHADER, ShaderUtils.readShaderSourceCode(mContext, R.raw.surface_solid_wirframe_fragment));
 
         //create program
         mShaderProgram = ShaderUtils.createProgram(mVertexShader, mFragmentShader, mGeometryShader);
@@ -82,8 +81,7 @@ public class SoildWireframeRenderingShader extends RenderingShader{
         }
     }
 
-    public void render()
-    {
+    public void render() {
         GLES31.glUseProgram(mShaderProgram);
 
         // Screen Size

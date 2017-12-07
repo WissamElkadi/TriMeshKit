@@ -1,13 +1,6 @@
 precision highp float;
 
-////Input
-varying vec3 f_Normal;
-varying vec3 f_Position;
 
-////Uniform
-uniform mat4 u_ModelViewMatrix;
-uniform vec3 u_CameraPosition;
-uniform vec3 u_CameraDirection;
 
 void main()
 {
@@ -23,13 +16,13 @@ void main()
 	//[2] Compute the diffuse term
 	vec3 lightDirection = - normalize(u_CameraDirection);
 	float diffuseLight = max(dot(normal, lightDirection), 0.0);
-	vec3 diffuseColor = diffuseLight * vec3(0.0, 1.0, 1.0);
+	vec3 diffuseColor = diffuseLight * vec3(1.0, 0.0, 0.0);
 
 	//[3] Compute the specular term
 	vec3 viewDirection = normalize(cameraPosition - f_Position);
 	vec3 reflectDirection = reflect(-lightDirection, normal);
 	float specularLight = pow(max(dot(viewDirection, reflectDirection), 0.0), 50.2);
-	vec3 specularColor = specularLight * vec3(0.0, 1.0, 1.0);
+	vec3 specularColor = specularLight * vec3(1.0, 0.0, 0.0);
 
 	//[4] Define the final vertex color
 	vec3 fillColor =  ambientColor + diffuseColor + specularColor;
