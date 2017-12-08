@@ -139,7 +139,7 @@ public class RenderingShader {
         Matrix.perspectiveM(mProjectionMatrix, 0, 45.0f / _scaleFactor, mSurfaceAspectRatio, 0.1f, 30.0f);
     }
 
-    public void setMesh(TriMesh _mesh) {
+    public void setMesh(TriMesh _mesh, boolean updateModelViewMatrix) {
         mTriMesh = _mesh;
 
         float[] center = mTriMesh.getCenter();
@@ -151,8 +151,13 @@ public class RenderingShader {
         mCameraDirection[1] = mTriMesh.getLargetLength() / 2;
         mCameraDirection[2] = -mTriMesh.getLargetLength();
 
+        if(updateModelViewMatrix)
         Matrix.setLookAtM(mModelViewMatrix, 0, mCameraPosition[0], mCameraPosition[1], mCameraPosition[2],
                 center[0], center[1], center[2], 0.0f, 1.0f, 0.0f);
+        else {
+            Matrix.setIdentityM(mProjectionMatrix, 0);
+            Matrix.setIdentityM(mModelViewMatrix, 0);
+        }
     }
 
 }

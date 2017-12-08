@@ -33,6 +33,7 @@ public class MainGLSurfaceView extends GLSurfaceView {
     private float mDisplayHeight;
 
     private boolean mDrawing = false;
+    private boolean mIsFirstLassoPoint = true;
 
     public MainGLSurfaceView(Context _context, AttributeSet _attributeSet) {
         super(_context, _attributeSet);
@@ -73,6 +74,7 @@ public class MainGLSurfaceView extends GLSurfaceView {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     mDrawing = true;
+                    mIsFirstLassoPoint = true;
                     break;
                 case MotionEvent.ACTION_MOVE:
                     if(ApplicationState.getApplicationState() == ApplicationState.ApplicationStateEnum.GENERAL) {
@@ -85,7 +87,8 @@ public class MainGLSurfaceView extends GLSurfaceView {
                         double  xNormalized = (2 * x) / mDisplayWidth -1.0;
                         double  yNormalized = 1.0 - (2 * y) / mDisplayHeight ;
 
-                        mRenderer.addLassoPoints(xNormalized, yNormalized);
+                        mRenderer.addLassoPoints(xNormalized, yNormalized, mIsFirstLassoPoint);
+                        mIsFirstLassoPoint = false;
                     }
                     break;
                 case MotionEvent.ACTION_UP:
@@ -129,8 +132,8 @@ public class MainGLSurfaceView extends GLSurfaceView {
         mRenderer.changeSketchType(_sketchTypeMode);
     }
 
-    public void loadMesh(TriMesh _triMesh) {
-        mRenderer.loadMesh(_triMesh);
+    public void loadMesh(TriMesh _triMesh, boolean updateModelViewMatrix) {
+        mRenderer.loadMesh(_triMesh, updateModelViewMatrix);
         requestRender();
     }
 

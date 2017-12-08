@@ -21,7 +21,7 @@ public class Definations {
     }
 
     public enum SketchModeType {
-        BOUNDARY(0), FLAT(1), CONVEX(2), CONCAVE(3), VALLEY(4),  NONE(5);
+        BOUNDARY(0), FLAT(1), FEATURE(2), CONVEX(3), CONCAVE(4), VALLEY(5),  RIDGE(6), NONE(7);
 
         private final int value;
 

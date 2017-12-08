@@ -6,4 +6,10 @@
     <color name="grey">#696969</color>
     <color name="black">#000000</color>
     <color name="yellow">#FFFF00</color>
+    <color name="lightGreen">#00FF00</color>
+    <color name="blue">#0000FF</color>
+    <color name="coral">#FF7F50</color>
+    <color name="green">#006400</color>
+    <color name="red">#FF0000</color>
+    <color name="purple">#800080</color>
 </resources>

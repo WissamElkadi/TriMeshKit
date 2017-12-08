@@ -6,16 +6,16 @@ set(LIB_DIR ${ROOT_DIR}/modules/mesh_processing)
 set(LIB_SRC
     ${LIB_DIR}/src/TriMeshUtils.cpp
     ${LIB_DIR}/src/TriMesh.cpp
-    ${LIB_DIR}/src/LaplaceBeltramiOperator.cpp
-    ${LIB_DIR}/src/TriMeshLinearSystem.cpp
+    #${LIB_DIR}/src/LaplaceBeltramiOperator.cpp
+    #${LIB_DIR}/src/TriMeshLinearSystem.cpp
 )
 
 # Include Files
 set(LIB_INC
     ${LIB_DIR}/include/TriMeshUtils.h
     ${LIB_DIR}/include/TriMesh.h
-    ${LIB_DIR}/include/LaplaceBeltramiOperator.h
-    ${LIB_DIR}/include/TriMeshLinearSystem.h
+    #${LIB_DIR}/include/LaplaceBeltramiOperator.h
+    #${LIB_DIR}/include/TriMeshLinearSystem.h
 )
 
 # Source files grouping in IDE

@@ -78,7 +78,7 @@ JNIEXPORT void JNICALL Java_com_trimeshkit_meshprocessing_TriMeshUtils_triangula
 	  }
 
       TriMeshUtils::triangulate( *inst, pointsVector, segmentList, std::vector<OpenMesh::Vec2d>(), 
-	                                   std::vector<int>(), std::vector<int>(), "a0.005q");
+	                                   std::vector<int>(), std::vector<int>(), "a0.001q");
 
 	  _env->ReleaseDoubleArrayElements(_pointList, _pointArray, 0);
   }

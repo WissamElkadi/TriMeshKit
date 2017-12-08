@@ -12,7 +12,7 @@
             android:title="Export" />
         <item
             android:id="@+id/nav_sketch_modeling"
-            android:icon="@drawable/pencil"
+            android:icon="@drawable/sketch"
             android:title="Sketch Modeling" />
         <item
             android:id="@+id/nav_deformation"

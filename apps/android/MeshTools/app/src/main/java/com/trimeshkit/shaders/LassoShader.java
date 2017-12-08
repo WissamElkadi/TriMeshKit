@@ -30,6 +30,7 @@ public class LassoShader {
     private ByteBuffer mPoints;
     private ArrayList<Float> mPointsArray = new ArrayList<>(0);
     private int mPointsCount = 0;
+    private boolean mIsInitialized = false;
 
     public LassoShader(Context _context, float[] _color) {
         mContext = (Activity) _context;
@@ -56,6 +57,8 @@ public class LassoShader {
 
             // Stop using the shader program
             GLES31.glUseProgram(0);
+
+            mIsInitialized = true;
         }
     }
 
@@ -79,14 +82,14 @@ public class LassoShader {
         GLES31.glUseProgram(mShaderProgram);
 
         if(mPointsCount > 0) {
-            GLES31.glLineWidth(1.0f);
+            GLES31.glLineWidth(10.0f);
             GLES31.glEnableVertexAttribArray(mVertexHandle);
-            GLES31.glVertexAttribPointer(mVertexHandle, 2, GLES31.GL_FLOAT, false, 2 * 4, mPoints);
+            GLES31.glVertexAttribPointer(mVertexHandle, 2, GLES31.GL_FLOAT, false, 0, mPoints);
 
             // Color Position
             GLES31.glUniform4f(mColorHandle, mColor[0], mColor[1], mColor[2], mColor[3]);
 
-            GLES31.glDrawArrays(GLES31.GL_LINES, 0, mPointsCount);
+            GLES31.glDrawArrays(GLES31.GL_LINE_STRIP, 0, mPointsCount);
 
             GLES31.glDisableVertexAttribArray(mVertexHandle);
         }
@@ -96,5 +99,10 @@ public class LassoShader {
     public ArrayList<Float> getPointsSet()
     {
         return mPointsArray;
+    }
+
+    public boolean isInitialized()
+    {
+        return mIsInitialized;
     }
 }
