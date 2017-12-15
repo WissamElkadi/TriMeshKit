@@ -45,6 +45,9 @@ public class MainGLRenderer implements GLSurfaceView.Renderer {
     private ArrayList<LassoShader> mRidgeLassoShaders = new ArrayList<>();
 
 
+    private float mViewPortWidth;
+    private float mViewPortHeight;
+
     private boolean mIsRendering = false;
 
     public MainGLRenderer(Context _context) {
@@ -143,6 +146,8 @@ public class MainGLRenderer implements GLSurfaceView.Renderer {
     }
 
     public void onSurfaceChanged(GL10 unused, int width, int height) {
+        mViewPortWidth = width;
+        mViewPortHeight = height;
         mSoildWireframeRenderingShader.updateViewPortAndProjection(width, height);
         mSolidRenderingShader.updateViewPortAndProjection(width, height);
         mWireframeRenderingShader.updateViewPortAndProjection(width, height);
@@ -188,6 +193,9 @@ public class MainGLRenderer implements GLSurfaceView.Renderer {
 
     public void addLassoPoints(double _x, double _y, boolean _isFirstLassoPoint) {
 
+        double  xNormalized = (2 * _x) / mViewPortWidth -1.0;
+        double  yNormalized = 1.0 - (2 * _y) / mViewPortHeight ;
+
         if (_isFirstLassoPoint) {
             if (mCurrentSketchingModeType == Definations.SketchModeType.BOUNDARY) {
                 float[] boundryColor = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -222,19 +230,19 @@ public class MainGLRenderer implements GLSurfaceView.Renderer {
         }
 
         if (mCurrentSketchingModeType == Definations.SketchModeType.BOUNDARY)
-            mBoundryLassoShaders.get(mBoundryLassoShaders.size() - 1).addPoints(_x, _y);
+            mBoundryLassoShaders.get(mBoundryLassoShaders.size() - 1).addPoints(xNormalized, yNormalized);
         else if (mCurrentSketchingModeType == Definations.SketchModeType.FLAT)
-            mFlatLassoShaders.get(mFlatLassoShaders.size() - 1).addPoints(_x, _y);
+            mFlatLassoShaders.get(mFlatLassoShaders.size() - 1).addPoints(xNormalized, yNormalized);
         else if (mCurrentSketchingModeType == Definations.SketchModeType.CONVEX)
-            mConvexLassoShaders.get(mConvexLassoShaders.size() - 1).addPoints(_x, _y);
+            mConvexLassoShaders.get(mConvexLassoShaders.size() - 1).addPoints(xNormalized, yNormalized);
         else if (mCurrentSketchingModeType == Definations.SketchModeType.CONCAVE)
-            mConcaveLassoShaders.get(mConcaveLassoShaders.size() - 1).addPoints(_x, _y);
+            mConcaveLassoShaders.get(mConcaveLassoShaders.size() - 1).addPoints(xNormalized, yNormalized);
         else if (mCurrentSketchingModeType == Definations.SketchModeType.FEATURE)
-            mFeatureLassoShaders.get(mFeatureLassoShaders.size() - 1).addPoints(_x, _y);
+            mFeatureLassoShaders.get(mFeatureLassoShaders.size() - 1).addPoints(xNormalized, yNormalized);
         else if (mCurrentSketchingModeType == Definations.SketchModeType.VALLEY)
-            mValleyLassoShaders.get(mValleyLassoShaders.size() - 1).addPoints(_x, _y);
+            mValleyLassoShaders.get(mValleyLassoShaders.size() - 1).addPoints(xNormalized, yNormalized);
         else if (mCurrentSketchingModeType == Definations.SketchModeType.RIDGE)
-            mRidgeLassoShaders.get(mRidgeLassoShaders.size() - 1).addPoints(_x, _y);
+            mRidgeLassoShaders.get(mRidgeLassoShaders.size() - 1).addPoints(xNormalized, yNormalized);
     }
 
     public void changeSketchType(Definations.SketchModeType _sketchTypeMode) {
@@ -247,5 +255,16 @@ public class MainGLRenderer implements GLSurfaceView.Renderer {
             result.addAll(lassoShader.getPointsSet());
 
         return result;
+    }
+
+    public void ereaseSketching()
+    {
+        mBoundryLassoShaders.clear();
+        mFlatLassoShaders.clear();
+        mFeatureLassoShaders.clear();
+        mConvexLassoShaders.clear();
+        mConcaveLassoShaders.clear();
+        mValleyLassoShaders.clear();
+        mRidgeLassoShaders.clear();
     }
 }

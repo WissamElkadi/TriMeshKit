@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_marginBottom="410dp"
+        android:layout_marginBottom="460dp"
         android:layout_marginRight="10dp"
         android:visibility="invisible"
         app:backgroundTint="@color/black"
@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_marginBottom="360dp"
+        android:layout_marginBottom="410dp"
         android:layout_marginRight="10dp"
         android:visibility="invisible"
         app:backgroundTint="@color/lightGreen"
@@ -35,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_marginBottom="310dp"
+        android:layout_marginBottom="360dp"
         android:layout_marginRight="10dp"
         android:visibility="invisible"
         app:backgroundTint="@color/green"
@@ -47,7 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_marginBottom="260dp"
+        android:layout_marginBottom="310dp"
         android:layout_marginRight="10dp"
         android:visibility="invisible"
         app:backgroundTint="@color/red"
@@ -59,7 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_marginBottom="210dp"
+        android:layout_marginBottom="260dp"
         android:layout_marginRight="10dp"
         android:visibility="invisible"
         app:backgroundTint="@color/blue"
@@ -71,7 +71,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_marginBottom="160dp"
+        android:layout_marginBottom="210dp"
         android:layout_marginRight="10dp"
         android:visibility="invisible"
         app:backgroundTint="@color/coral"
@@ -83,10 +83,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_marginBottom="110dp"
+        android:layout_marginBottom="160dp"
         android:layout_marginRight="10dp"
         android:visibility="invisible"
         app:backgroundTint="@color/purple"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/ereaseSketching"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="110dp"
+        android:layout_marginRight="10dp"
+        android:src="@mipmap/eraser"
+        android:visibility="invisible"
+        app:backgroundTint="@color/grey"
         app:elevation="6dp"
         app:pressedTranslationZ="12dp" />
 
@@ -97,8 +110,9 @@
         android:layout_gravity="bottom|right"
         android:layout_marginBottom="60dp"
         android:layout_marginRight="10dp"
+        android:src="@mipmap/ok"
         android:visibility="invisible"
-        app:backgroundTint="@color/yellow"
+        app:backgroundTint="@color/grey"
         app:elevation="6dp"
         app:pressedTranslationZ="12dp" />
 
@@ -113,7 +127,6 @@
         android:visibility="visible"
         app:backgroundTint="@color/grey"
         app:elevation="6dp"
-        app:fabSize="mini"
         app:pressedTranslationZ="12dp" />
 
 </android.support.design.widget.CoordinatorLayout>

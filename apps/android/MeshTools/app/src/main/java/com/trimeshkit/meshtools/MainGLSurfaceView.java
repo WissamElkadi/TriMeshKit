@@ -29,8 +29,6 @@ public class MainGLSurfaceView extends GLSurfaceView {
     private float mPreviousX;
     private float mPreviousY;
     private float mDisplayDenisty;
-    private float mDisplayWidth;
-    private float mDisplayHeight;
 
     private boolean mDrawing = false;
     private boolean mIsFirstLassoPoint = true;
@@ -56,8 +54,6 @@ public class MainGLSurfaceView extends GLSurfaceView {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         mDisplayDenisty = displayMetrics.density;
-        mDisplayWidth = displayMetrics.widthPixels;
-        mDisplayHeight = displayMetrics.heightPixels;
     }
 
     @Override
@@ -84,10 +80,8 @@ public class MainGLSurfaceView extends GLSurfaceView {
                     }
                     else if (mDrawing && ApplicationState.getApplicationState() == ApplicationState.ApplicationStateEnum.SKETCH)
                     {
-                        double  xNormalized = (2 * x) / mDisplayWidth -1.0;
-                        double  yNormalized = 1.0 - (2 * y) / mDisplayHeight ;
 
-                        mRenderer.addLassoPoints(xNormalized, yNormalized, mIsFirstLassoPoint);
+                        mRenderer.addLassoPoints(x, y, mIsFirstLassoPoint);
                         mIsFirstLassoPoint = false;
                     }
                     break;
@@ -140,5 +134,10 @@ public class MainGLSurfaceView extends GLSurfaceView {
     public  ArrayList<Float> getBoundryPoits()
     {
        return mRenderer.getBoundryPoits();
+    }
+
+    public void ereaseSketching()
+    {
+        mRenderer.ereaseSketching();
     }
 }

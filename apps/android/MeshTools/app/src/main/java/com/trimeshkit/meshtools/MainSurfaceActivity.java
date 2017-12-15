@@ -40,7 +40,7 @@ public class MainSurfaceActivity extends AppCompatActivity
     private Boolean mIsRenderingFABOpen = false, mIsSketchingFABOpen = false;
     private FloatingActionButton mRenderingFAB, mSolidRenderingFAB, mSolidWireframeRenderingFAB, mWireframeRenderingFAB, mNormalRenderingFAB, mPointRenderingFAB;
     private FloatingActionButton mSketchingFAB, mBoundrySketchingFAB, mFlatSketchingFAB, mFeatureSketchingFAB, mConvexSketchingFAB, mConcaveSketchingFAB, mValleySketchingFAB,
-            mRidgeSketchingFAB, mApplySketchingFAB;
+            mRidgeSketchingFAB, mEreaseSketchingFAB, mApplySketchingFAB;
 
     private Animation fab_open, fab_close, rotate_forward, rotate_backward;
 
@@ -338,6 +338,9 @@ public class MainSurfaceActivity extends AppCompatActivity
             case R.id.ridgeSketchingFAB:
                 mGLView.changeSketchType(Definations.SketchModeType.RIDGE);
                 break;
+            case R.id.ereaseSketching:
+                mGLView.ereaseSketching();
+                break;
             case R.id.applyBendSketching:
                 ArrayList<Float> boundrayList = mGLView.getBoundryPoits();
                 TriangulatePointsTask triangulatePointsTask = new TriangulatePointsTask(this);
@@ -385,6 +388,7 @@ public class MainSurfaceActivity extends AppCompatActivity
         mConcaveSketchingFAB = (FloatingActionButton) findViewById(R.id.concaveSketchingFAB);
         mValleySketchingFAB = (FloatingActionButton) findViewById(R.id.valleySketchingFAB);
         mRidgeSketchingFAB = (FloatingActionButton) findViewById(R.id.ridgeSketchingFAB);
+        mEreaseSketchingFAB = (FloatingActionButton) findViewById(R.id.ereaseSketching);
         mApplySketchingFAB = (FloatingActionButton) findViewById(R.id.applyBendSketching);
 
         mSketchingFAB.setOnClickListener(this);
@@ -395,6 +399,7 @@ public class MainSurfaceActivity extends AppCompatActivity
         mConcaveSketchingFAB.setOnClickListener(this);
         mValleySketchingFAB.setOnClickListener(this);
         mRidgeSketchingFAB.setOnClickListener(this);
+        mEreaseSketchingFAB.setOnClickListener(this);
         mApplySketchingFAB.setOnClickListener(this);
     }
 
@@ -450,6 +455,7 @@ public class MainSurfaceActivity extends AppCompatActivity
             mConcaveSketchingFAB.startAnimation(fab_close);
             mValleySketchingFAB.startAnimation(fab_close);
             mRidgeSketchingFAB.startAnimation(fab_close);
+            mEreaseSketchingFAB.startAnimation(fab_close);
             mApplySketchingFAB.startAnimation(fab_close);
 
             mBoundrySketchingFAB.setClickable(false);
@@ -459,6 +465,7 @@ public class MainSurfaceActivity extends AppCompatActivity
             mConcaveSketchingFAB.setClickable(false);
             mValleySketchingFAB.setClickable(false);
             mRidgeSketchingFAB.setClickable(false);
+            mEreaseSketchingFAB.setClickable(false);
             mApplySketchingFAB.setClickable(false);
 
             mIsSketchingFABOpen = false;
@@ -471,6 +478,7 @@ public class MainSurfaceActivity extends AppCompatActivity
             mConcaveSketchingFAB.startAnimation(fab_open);
             mValleySketchingFAB.startAnimation(fab_open);
             mRidgeSketchingFAB.startAnimation(fab_open);
+            mEreaseSketchingFAB.startAnimation(fab_open);
             mApplySketchingFAB.startAnimation(fab_open);
 
             mBoundrySketchingFAB.setClickable(true);
@@ -480,6 +488,7 @@ public class MainSurfaceActivity extends AppCompatActivity
             mConcaveSketchingFAB.setClickable(true);
             mValleySketchingFAB.setClickable(true);
             mRidgeSketchingFAB.setClickable(true);
+            mEreaseSketchingFAB.setClickable(true);
             mApplySketchingFAB.setClickable(true);
 
             mIsSketchingFABOpen = true;

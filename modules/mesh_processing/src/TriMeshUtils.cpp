@@ -160,7 +160,7 @@ void TriMeshKit::MeshProcessing::TriMeshUtils::triangulate(TriMesh& _mesh,
     free(out.segmentlist);
     free(out.segmentmarkerlist);
     free(out.pointmarkerlist);
-	
+
 	_mesh.refresh(true);
 
 }
