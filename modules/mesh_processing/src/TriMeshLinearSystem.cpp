@@ -1,43 +1,94 @@
+#ifndef MESH_PROCESSING_TRIMESHLINEARSYSTEM_CPP
+#define MESH_PROCESSING_TRIMESHLINEARSYSTEM_CPP
+
 #include "TriMeshLinearSystem.h"
 #include "TriMesh.h"
 #include "TriMeshUtils.h"
 #include <omp.h>
+#include <iostream>
 
-TriMeshKit::MeshProcessing::TriMeshLinearSystem::TriMeshLinearSystem(TriMesh& _triMesh) :
-    mTriMesh(_triMesh)
+template <typename VPropType>
+TriMeshKit::MeshProcessing::TriMeshLinearSystem<VPropType>::TriMeshLinearSystem(TriMesh& _triMesh, OpenMesh::VPropHandleT<VPropType> _vPropoHandle) :
+    mTriMesh(_triMesh), mVPropertyHandle(_vPropoHandle)
 {
     LaplaceBeltramiOperator<>::build(mTriMesh, mLaplaceMatrix);
 
-    mPointsMatrix.resize(mTriMesh.n_vertices(), 3);
-    for (const auto& vh : mTriMesh.vertices())
+    mPropertyMatrix.resize(mTriMesh.n_vertices(), VPropType::size_);
+
+#pragma omp parallel for
+    for (int i = 0; i < mTriMesh.n_vertices(); ++i)
     {
-        auto point = mTriMesh.point(vh);
-        mPointsMatrix(vh.idx(), 0) = point[0];
-        mPointsMatrix(vh.idx(), 1) = point[1];
-        mPointsMatrix(vh.idx(), 2) = point[2];
+        auto& propertyValue = mTriMesh.property(mVPropertyHandle, mTriMesh.vertex_handle(i));
+        for (int j = 0; j < VPropType::size_; ++j)
+            mPropertyMatrix(i, j) = propertyValue[j];
     }
 
-    mDiffrentialPointsMatrix = (mLaplaceMatrix * mPointsMatrix).eval();
+    mDiffrentialPropertyMatrix = (mLaplaceMatrix * mPropertyMatrix).eval();
 }
 
-void TriMeshKit::MeshProcessing::TriMeshLinearSystem::build()
+template <typename VPropType>
+void TriMeshKit::MeshProcessing::TriMeshLinearSystem<VPropType>::build()
 {
-    mSparseSolver.analyzePattern(mLeftMatrix);
-    mSparseSolver.factorize(mLeftMatrix);
+    mA = mLeftMatrix;
+    mB = mRightMatrix;
+
+    if (mDirichletBoundryCondition.size() == 0)
+    {
+        Eigen::SparseMatrix<double> identityEqualityMatrix;
+        Eigen::Matrix<double, Eigen::Dynamic, VPropType::size_>  bEqualityMatrix;
+        bEqualityMatrix.resize(mDirichletBoundryCondition.size(), VPropType::size_);
+
+        std::vector<Eigen::Triplet<double>> tripletList;
+        tripletList.reserve(mDirichletBoundryCondition.size());
+
+        int i = 0;
+        for (const auto & condition : mDirichletBoundryCondition)
+        {
+            tripletList.emplace_back(i, condition.first.idx(), 1.0);
+
+            for (int j = 0; j < bEqualityMatrix.cols(); ++j)
+            {
+                bEqualityMatrix(i, j) = condition.second[j];
+            }
+            ++i;
+        }
+
+        identityEqualityMatrix.resize(mDirichletBoundryCondition.size(), mLeftMatrix.cols());
+        identityEqualityMatrix.setFromTriplets(tripletList.begin(), tripletList.end());
+
+        mA.conservativeResize(mLeftMatrix.rows() + mDirichletBoundryCondition.size(), mLeftMatrix.cols());
+        mA = mA.transpose();
+        mA.rightCols(mDirichletBoundryCondition.size()) = identityEqualityMatrix;
+        mA = mA.transpose();
+
+        mB.conservativeResize(mRightMatrix.rows() + mDirichletBoundryCondition.size(), mRightMatrix.cols());
+        mB.bottomRows(mDirichletBoundryCondition.size()) = bEqualityMatrix;
+
+    }
+
+    std::cout << "WISSAM 1" << std::endl;
+    mSparseSolver.analyzePattern(-mA);
+    mSparseSolver.factorize(-mA);
+    std::cout << "WISSAM 2" << std::endl;
+    mIsDirtySystem = false;
 }
 
-
-void TriMeshKit::MeshProcessing::TriMeshLinearSystem::solve()
+template <typename VPropType>
+void TriMeshKit::MeshProcessing::TriMeshLinearSystem<VPropType>::solve()
 {
-    build();
+    if (mIsDirtySystem)
+        build();
 
+    std::cout << "WISSAM 3" << std::endl;
     // solve Ax = b
     if (mSparseSolver.info() != Eigen::Success) {
         // decomposition failed
+        std::cout << "WISSAM 4" << std::endl;
         return;
     }
-    auto leftUnknown = mSparseSolver.solve(mRightMatrix);
+    auto solution = mSparseSolver.solve(mB);
     if (mSparseSolver.info() != Eigen::Success) {
+        std::cout << "WISSAM 5" << std::endl;
         // solving failed
         return;
     }
@@ -45,19 +96,31 @@ void TriMeshKit::MeshProcessing::TriMeshLinearSystem::solve()
 #pragma omp parallel for
     for (int i = 0; i < mTriMesh.n_vertices(); ++i)
     {
-        mTriMesh.set_point(mTriMesh.vertex_handle(i), OpenMesh::Vec3f(leftUnknown(i, 0), leftUnknown(i, 1), leftUnknown(i, 2)));
+        auto& propertyValue = mTriMesh.property(mVPropertyHandle, mTriMesh.vertex_handle(i));
+        for (int j = 0; j < VPropType::size_; ++j)
+        {
+            propertyValue[j] = solution(i, j);
+        }
     }
 
+   /* for (const auto& value : mDirichletBoundryCondition)
+    {
+        auto& propertyValue = mTriMesh.property(mVPropertyHandle, value.first);
+
+        for (int j = 0; j < solution.cols(); ++j)
+        {
+            propertyValue[j] = value.second[j];
+        }
+    }*/
+
     mTriMesh.setDirty(true);
-
-    TriMeshKit::MeshProcessing::TriMeshUtils::writeMesh(mTriMesh, "/storage/emulated/0/cube3.stl");
-
 }
 
-void TriMeshKit::MeshProcessing::TriMeshLinearSystem::addToRightMatrix(MatrixOperator _matrixOperator, double factor, OperationType _operationType /*= ADD*/)
+template <typename VPropType>
+void TriMeshKit::MeshProcessing::TriMeshLinearSystem<VPropType>::addToRightMatrix(MatrixOperator _matrixOperator, double factor, OperationType _operationType /*= ADD*/)
 {
-    Eigen::Matrix<double, Eigen::Dynamic, 3> tempMatrix;
-    tempMatrix.resize(mTriMesh.n_vertices(), 3);
+    Eigen::Matrix<double, Eigen::Dynamic, VPropType::size_> tempMatrix;
+    tempMatrix.resize(mTriMesh.n_vertices(), VPropType::size_);
 
     if (_matrixOperator == ZEROS)
     {
@@ -65,11 +128,11 @@ void TriMeshKit::MeshProcessing::TriMeshLinearSystem::addToRightMatrix(MatrixOpe
     }
     else if (_matrixOperator == IDENTITY)
     {
-        tempMatrix = mPointsMatrix.eval();
+        tempMatrix = mPropertyMatrix.eval();
     }
     else if (_matrixOperator == LAPLACIAN)
     {
-        tempMatrix = mDiffrentialPointsMatrix.eval();
+        tempMatrix = mDiffrentialPropertyMatrix.eval();
     }
 
     if (_operationType == INIT)
@@ -86,7 +149,8 @@ void TriMeshKit::MeshProcessing::TriMeshLinearSystem::addToRightMatrix(MatrixOpe
     }
 }
 
-void TriMeshKit::MeshProcessing::TriMeshLinearSystem::addToLeftMatrix(MatrixOperator _matrixOperator, double factor, OperationType _operationType /*= ADD*/)
+template <typename VPropType>
+void TriMeshKit::MeshProcessing::TriMeshLinearSystem<VPropType>::addToLeftMatrix(MatrixOperator _matrixOperator, double factor, OperationType _operationType /*= ADD*/)
 {
     Eigen::SparseMatrix<double> tempMatrix;
     tempMatrix.resize(mTriMesh.n_vertices(), mTriMesh.n_vertices());
@@ -117,3 +181,13 @@ void TriMeshKit::MeshProcessing::TriMeshLinearSystem::addToLeftMatrix(MatrixOper
         mLeftMatrix -= (tempMatrix * factor).eval();
     }
 }
+
+template <typename VPropType>
+void TriMeshKit::MeshProcessing::TriMeshLinearSystem<VPropType>::addDirichletBoundryCondition(const TriMesh::VertexHandle& _vh, const VPropType& _pValue)
+{
+    mIsDirtySystem = true;
+    mDirichletBoundryCondition.emplace(_vh, _pValue);
+}
+
+
+#endif //MESH_PROCESSING_TRIMESHLINEARSYSTEM_CPP

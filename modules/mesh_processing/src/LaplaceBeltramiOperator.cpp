@@ -12,21 +12,19 @@ void TriMeshKit::MeshProcessing::LaplaceBeltramiOperator<Order>::build(const Tri
 
     for (const auto& vh_i : _triMesh.vertices())
     {
-        double dualArea = 0.0;
-        /*int faceCount = 0;
+       /* double dualArea = 0.0;
         for (const auto & fh : _triMesh.vf_range(vh_i))
         {
-            ++faceCount;
             dualArea += _triMesh.calc_face_normal(fh).length();
         }
-        dualArea /= faceCount;*/
+        dualArea /= 3;*/
 
         double sum_w_ij = 0.0;
         for (const auto& heh : _triMesh.voh_range(vh_i))
         {
             double cotAlpha = _triMesh.cotan(heh);
             double cotBeta = _triMesh.cotan(_triMesh.opposite_halfedge_handle(heh));
-            double w_ij = (double)((cotAlpha + cotBeta) / 2.);
+            double w_ij = (double)((cotAlpha + cotBeta) / (2. /** dualArea*/));
             sum_w_ij -= w_ij;
             tripletList.emplace_back(vh_i.idx(), _triMesh.to_vertex_handle(heh).idx(), w_ij);
         }
