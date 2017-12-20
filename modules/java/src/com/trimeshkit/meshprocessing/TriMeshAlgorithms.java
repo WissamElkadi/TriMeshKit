@@ -11,5 +11,7 @@ public class TriMeshAlgorithms
 		return result;
 	}
 
+	public native static void triangulate(TriMesh _mesh, double[] _pointList);
+
     private native static boolean smooth (TriMesh _mesh);
 };

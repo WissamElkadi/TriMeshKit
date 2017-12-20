@@ -157,7 +157,7 @@ public class MainSurfaceActivity extends AppCompatActivity
                 doubleArray[i++] = (f != null ? f : Float.NaN);
             }
 
-            TriMeshUtils.triangulate(activity.mTriMesh, doubleArray);
+            TriMeshAlgorithms.triangulate(activity.mTriMesh, doubleArray);
 
             ApplicationState.setApplicationState(ApplicationState.ApplicationStateEnum.GENERAL);
 
