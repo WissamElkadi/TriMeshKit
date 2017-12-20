@@ -26,4 +26,6 @@
 
     <include layout="@layout/sketching_fab" />
 
+    <include layout="@layout/algorithms_fab" />
+
 </android.support.design.widget.CoordinatorLayout>

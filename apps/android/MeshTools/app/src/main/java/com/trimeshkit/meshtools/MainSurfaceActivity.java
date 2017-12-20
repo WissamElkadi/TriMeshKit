@@ -42,6 +42,7 @@ public class MainSurfaceActivity extends AppCompatActivity
     private FloatingActionButton mRenderingFAB, mSolidRenderingFAB, mSolidWireframeRenderingFAB, mWireframeRenderingFAB, mNormalRenderingFAB, mPointRenderingFAB;
     private FloatingActionButton mSketchingFAB, mBoundrySketchingFAB, mFlatSketchingFAB, mFeatureSketchingFAB, mConvexSketchingFAB, mConcaveSketchingFAB, mValleySketchingFAB,
             mRidgeSketchingFAB, mEreaseSketchingFAB, mApplySketchingFAB;
+    private FloatingActionButton mSmoothingFAB;
 
     private Animation fab_open, fab_close, rotate_forward, rotate_backward;
 
@@ -216,6 +217,7 @@ public class MainSurfaceActivity extends AppCompatActivity
         // FAB
         initializeRenderingFAB();
         initializeSketchingFAB();
+        initializeAlgorithmsFAB();
         initializeFABAnimation();
     }
 
@@ -345,6 +347,12 @@ public class MainSurfaceActivity extends AppCompatActivity
                 TriangulatePointsTask triangulatePointsTask = new TriangulatePointsTask(this);
                 triangulatePointsTask.execute(boundrayList);
                 break;
+            case R.id.smoothingFAB:
+                if(mTriMesh != null) {
+                    SmoothMeshTask smoothMeshTask = new SmoothMeshTask(this);
+                    smoothMeshTask.execute();
+                }
+                break;
         }
     }
 
@@ -400,6 +408,10 @@ public class MainSurfaceActivity extends AppCompatActivity
         mApplySketchingFAB.setOnClickListener(this);
     }
 
+    private void initializeAlgorithmsFAB() {
+        mSmoothingFAB = (FloatingActionButton) findViewById(R.id.smoothingFAB);
+        mSmoothingFAB.setOnClickListener(this);
+    }
     private void initializeFABAnimation() {
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
