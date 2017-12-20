@@ -6,16 +6,21 @@ set(LIB_DIR ${ROOT_DIR}/modules/mesh_processing)
 set(LIB_SRC
     ${LIB_DIR}/src/TriMeshUtils.cpp
     ${LIB_DIR}/src/TriMesh.cpp
-    #${LIB_DIR}/src/LaplaceBeltramiOperator.cpp
-    #${LIB_DIR}/src/TriMeshLinearSystem.cpp
+    ${LIB_DIR}/src/LaplaceBeltramiOperator.cpp
+    ${LIB_DIR}/src/TriMeshLinearSystem.cpp
+	${LIB_DIR}/src/EigenUtils.cpp
+	${LIB_DIR}/src/EigenUtilsTemp.cpp
+    ${LIB_DIR}/src/TriMeshAlgorithms.cpp
 )
 
 # Include Files
 set(LIB_INC
     ${LIB_DIR}/include/TriMeshUtils.h
     ${LIB_DIR}/include/TriMesh.h
-    #${LIB_DIR}/include/LaplaceBeltramiOperator.h
-    #${LIB_DIR}/include/TriMeshLinearSystem.h
+    ${LIB_DIR}/include/LaplaceBeltramiOperator.h
+    ${LIB_DIR}/include/TriMeshLinearSystem.h
+	${LIB_DIR}/include/EigenUtils.h
+    ${LIB_DIR}/include/TriMeshAlgorithms.h
 )
 
 # Source files grouping in IDE
@@ -49,7 +54,7 @@ target_include_directories(${TARGET_MESH_PROCESSING_LIB_NAME}
                      ${LIB_DIR}/include
                      ${OPENMESH_ROOT}/src
                      ${EIGEN_ROOT}
-					 ${TRIANGLE_ROOT}
+                     ${TRIANGLE_ROOT}
                     )
 
 installAndExportLib(${TARGET_MESH_PROCESSING_LIB_NAME})

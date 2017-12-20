@@ -64,7 +64,7 @@ bool TriMeshUtils::readMesh(TriMesh& _mesh, const std::string& _path, bool _requ
 
 void TriMeshUtils::writeMesh(TriMesh& _mesh, const std::string& _path, bool _binary /*= true*/)
 {
-    if (_binary)
+    if(_binary)
         OpenMesh::IO::write_mesh(_mesh, _path, OpenMesh::IO::Options::Binary);
     else
         OpenMesh::IO::write_mesh(_mesh, _path);

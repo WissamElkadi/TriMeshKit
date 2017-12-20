@@ -9,7 +9,8 @@ public class TriMesh
     private Buffer mNormals;
     private Buffer mPositions;
     private Buffer mFacesIndices;
-    private boolean mDirty = true;
+	
+    public boolean mDirty = true;
 
     public TriMesh()
 	{
@@ -60,7 +61,7 @@ public class TriMesh
     public native void refresh(boolean _updateNormals);
     public native void setDirty(boolean _isDirty);
 	public native boolean isDirty();
-	
+
 	private native void initialise();
     private native float[] getInternalVerticesPoints();
     private native float[] getInternalVerticesNormals();

@@ -22,6 +22,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.trimeshkit.meshprocessing.TriMesh;
+import com.trimeshkit.meshprocessing.TriMeshAlgorithms;
 import com.trimeshkit.meshprocessing.TriMeshUtils;
 import com.trimeshkit.state.ApplicationState;
 
@@ -69,9 +70,7 @@ public class MainSurfaceActivity extends AppCompatActivity
         }
 
         protected Boolean doInBackground(Void... parms) {
-//           / activity.mTriMesh.smoothMesh();
-
-            return true;
+            return TriMeshAlgorithms.smoothMesh(activity.mTriMesh);
         }
 
         protected void onPostExecute(Boolean result) {
@@ -300,21 +299,21 @@ public class MainSurfaceActivity extends AppCompatActivity
                 animateRenderingFAB();
                 break;
             case R.id.solidRenderingFAB:
-                    mGLView.changeRenderingType(Definations.RenderingModeType.SOLID);
+                mGLView.changeRenderingType(Definations.RenderingModeType.SOLID);
                 break;
             case R.id.solidWireframeRenderingFAB:
-                    mGLView.changeRenderingType(Definations.RenderingModeType.SOLID_WIREFRAME);
+                mGLView.changeRenderingType(Definations.RenderingModeType.SOLID_WIREFRAME);
                 break;
             case R.id.wireframeRenderingFAB:
-                    mGLView.changeRenderingType(Definations.RenderingModeType.WIREFRAME);
+                mGLView.changeRenderingType(Definations.RenderingModeType.WIREFRAME);
                 break;
             case R.id.pointRenderingFAB:
-                    mGLView.changeRenderingType(Definations.RenderingModeType.POINTS);
+                mGLView.changeRenderingType(Definations.RenderingModeType.POINTS);
                 break;
             case R.id.normalRenderingFAB:
-                    mGLView.changeRenderingType(Definations.RenderingModeType.NORMALS);
+                mGLView.changeRenderingType(Definations.RenderingModeType.NORMALS);
                 break;
-            case  R.id.sketchingFAB:
+            case R.id.sketchingFAB:
                 animateSketchingFAB();
                 break;
             case R.id.boundrySketchingFAB:
@@ -360,8 +359,7 @@ public class MainSurfaceActivity extends AppCompatActivity
         }
     }
 
-    private void initializeRenderingFAB()
-    {
+    private void initializeRenderingFAB() {
         /// Rendering FAB
         mRenderingFAB = (FloatingActionButton) findViewById(R.id.renderingFAB);
         mSolidRenderingFAB = (FloatingActionButton) findViewById(R.id.solidRenderingFAB);
@@ -378,8 +376,7 @@ public class MainSurfaceActivity extends AppCompatActivity
         mPointRenderingFAB.setOnClickListener(this);
     }
 
-    private void initializeSketchingFAB()
-    {
+    private void initializeSketchingFAB() {
         mSketchingFAB = (FloatingActionButton) findViewById(R.id.sketchingFAB);
         mBoundrySketchingFAB = (FloatingActionButton) findViewById(R.id.boundrySketchingFAB);
         mFlatSketchingFAB = (FloatingActionButton) findViewById(R.id.flatSketchingFAB);
@@ -403,16 +400,14 @@ public class MainSurfaceActivity extends AppCompatActivity
         mApplySketchingFAB.setOnClickListener(this);
     }
 
-    private void initializeFABAnimation()
-    {
+    private void initializeFABAnimation() {
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
         rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_forward);
         rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_backward);
     }
 
-    private void animateRenderingFAB()
-    {
+    private void animateRenderingFAB() {
         if (mIsRenderingFABOpen) {
             mRenderingFAB.startAnimation(rotate_backward);
             mSolidRenderingFAB.startAnimation(fab_close);
@@ -444,8 +439,7 @@ public class MainSurfaceActivity extends AppCompatActivity
         }
     }
 
-    private void animateSketchingFAB()
-    {
+    private void animateSketchingFAB() {
         if (mIsSketchingFABOpen) {
             mSketchingFAB.startAnimation(rotate_backward);
             mBoundrySketchingFAB.startAnimation(fab_close);
