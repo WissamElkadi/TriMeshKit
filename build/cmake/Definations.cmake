@@ -1,7 +1,8 @@
 #3rdparty Libs
+set(MODULES_ROOT ${ROOT_DIR}/modules)
 set(OPENMESH_ROOT ${ROOT_DIR}/3rdparty/open_mesh)
 set(EIGEN_ROOT ${ROOT_DIR}/3rdparty/eigen_lib)
-set(MODULES_ROOT ${ROOT_DIR}/modules)
+set(TRIANGLE_ROOT ${ROOT_DIR}/3rdparty/triangle)
 
 # Libs Names
 set(TARGET_MESH_PROCESSING_LIB_NAME "TriMeshProcessing")
@@ -9,7 +10,7 @@ set(TARGET_OPEN_MESH_CORE_LIB_NAME "OpenMeshCore")
 set(TARGET_TRI_MESH_KIT_LIB_NAME "TriMeshKit")
 set(TARGET_TRI_MESH_KIT_JNI_LIB_NAME "TriMeshKit-JNI")
 set(TARGET_TRI_MESH_KIT_JAVA_LIB_NAME "TriMeshKit-java")
-
+set(TARGET_TRIANGLE_LIB_NAME "Triangle")
 
 # PACKAGES DIRECTORY
 set(TRIMESHKIT_INSTALL_DIRECTORY    ${ROOT_DIR}/install)

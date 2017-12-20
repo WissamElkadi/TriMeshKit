@@ -46,6 +46,7 @@ endif()
 
 target_link_libraries(${TARGET_MESH_PROCESSING_LIB_NAME}
                       ${TARGET_OPEN_MESH_CORE_LIB_NAME}
+					  ${TARGET_TRIANGLE_LIB_NAME}
                 )
 
 target_include_directories(${TARGET_MESH_PROCESSING_LIB_NAME}
@@ -53,6 +54,7 @@ target_include_directories(${TARGET_MESH_PROCESSING_LIB_NAME}
                      ${LIB_DIR}/include
                      ${OPENMESH_ROOT}/src
                      ${EIGEN_ROOT}
+                     ${TRIANGLE_ROOT}
                     )
 
 installAndExportLib(${TARGET_MESH_PROCESSING_LIB_NAME})

@@ -19,4 +19,18 @@ public class Definations {
             return value;
         }
     }
+
+    public enum SketchModeType {
+        BOUNDARY(0), FLAT(1), FEATURE(2), CONVEX(3), CONCAVE(4), VALLEY(5),  RIDGE(6), NONE(7);
+
+        private final int value;
+
+        private SketchModeType(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
 }

@@ -2,29 +2,28 @@ package com.trimeshkit.shaders;
 
 import android.content.Context;
 import android.opengl.GLES31;
+
 import com.trimeshkit.meshtools.R;
 
 /**
  * Created by wahmed on 07/11/2017.
  */
 
-public class SolidRenderingShader extends RenderingShader{
+public class SolidRenderingShader extends RenderingShader {
 
 
-    public SolidRenderingShader(Context _context)
-    {
+    public SolidRenderingShader(Context _context) {
         super(_context);
     }
 
-    public void initShader()
-    {
+    public void initShader() {
         super.initShader();
 
         // load vertex shader
-        mVertexShader = ShaderUtils.loadShader(GLES31.GL_VERTEX_SHADER, readShaderSourceCode(R.raw.main_vertex));
+        mVertexShader = ShaderUtils.loadShader(GLES31.GL_VERTEX_SHADER, ShaderUtils.readShaderSourceCode(mContext, R.raw.main_vertex));
 
         // load fragment shader
-        mFragmentShader = ShaderUtils.loadShader(GLES31.GL_FRAGMENT_SHADER, readShaderSourceCode(R.raw.main_fragment));
+        mFragmentShader = ShaderUtils.loadShader(GLES31.GL_FRAGMENT_SHADER, ShaderUtils.readShaderSourceCode(mContext, R.raw.main_fragment));
 
         //create program
         mShaderProgram = ShaderUtils.createProgram(mVertexShader, mFragmentShader, -1);
@@ -46,8 +45,7 @@ public class SolidRenderingShader extends RenderingShader{
         }
     }
 
-    public void render()
-    {
+    public void render() {
         GLES31.glUseProgram(mShaderProgram);
 
         super.render(GLES31.GL_TRIANGLES);

@@ -2,29 +2,28 @@ package com.trimeshkit.shaders;
 
 import android.content.Context;
 import android.opengl.GLES31;
+
 import com.trimeshkit.meshtools.R;
 
 /**
  * Created by wahmed on 07/11/2017.
  */
 
-public class NormalsRenderingShader extends RenderingShader{
+public class NormalsRenderingShader extends RenderingShader {
 
 
-    public NormalsRenderingShader(Context _context)
-    {
+    public NormalsRenderingShader(Context _context) {
         super(_context);
     }
 
-    public void initShader()
-    {
+    public void initShader() {
         super.initShader();
 
         // load vertex shader
-        mVertexShader = ShaderUtils.loadShader(GLES31.GL_VERTEX_SHADER, readShaderSourceCode(R.raw.normals_vertex));
+        mVertexShader = ShaderUtils.loadShader(GLES31.GL_VERTEX_SHADER, ShaderUtils.readShaderSourceCode(mContext, R.raw.normals_vertex));
 
         // load fragment shader
-        mFragmentShader = ShaderUtils.loadShader(GLES31.GL_FRAGMENT_SHADER, readShaderSourceCode(R.raw.normals_fragment));
+        mFragmentShader = ShaderUtils.loadShader(GLES31.GL_FRAGMENT_SHADER, ShaderUtils.readShaderSourceCode(mContext, R.raw.normals_fragment));
 
         //create program
         mShaderProgram = ShaderUtils.createProgram(mVertexShader, mFragmentShader, -1);
@@ -44,8 +43,7 @@ public class NormalsRenderingShader extends RenderingShader{
         }
     }
 
-    public void render()
-    {
+    public void render() {
         GLES31.glUseProgram(mShaderProgram);
 
         // Redraw background color

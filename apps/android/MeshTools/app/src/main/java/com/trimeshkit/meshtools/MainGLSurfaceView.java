@@ -10,6 +10,9 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
 import com.trimeshkit.meshprocessing.TriMesh;
+import com.trimeshkit.state.ApplicationState;
+
+import java.util.ArrayList;
 
 /**
  * Created by wahmed on 21/10/2017.
@@ -27,8 +30,10 @@ public class MainGLSurfaceView extends GLSurfaceView {
     private float mPreviousY;
     private float mDisplayDenisty;
 
-    public MainGLSurfaceView(Context _context, AttributeSet _attributeSet)
-    {
+    private boolean mDrawing = false;
+    private boolean mIsFirstLassoPoint = true;
+
+    public MainGLSurfaceView(Context _context, AttributeSet _attributeSet) {
         super(_context, _attributeSet);
 
         mContext = _context;
@@ -47,28 +52,42 @@ public class MainGLSurfaceView extends GLSurfaceView {
         mScaleDetector = new ScaleGestureDetector(mContext, new ScaleListener());
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity)mContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         mDisplayDenisty = displayMetrics.density;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        if(event.getPointerCount() == 2) {
+        if (event.getPointerCount() == 2) {
             // Let the ScaleGestureDetector inspect all events.
             mScaleDetector.onTouchEvent(event);
-        }
-        else if(event.getPointerCount() == 1) {
+        } else if (event.getPointerCount() == 1) {
 
             float x = event.getX();
             float y = event.getY();
 
             switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    mDrawing = true;
+                    mIsFirstLassoPoint = true;
+                    break;
                 case MotionEvent.ACTION_MOVE:
-                    float deltaX = (x - mPreviousX) / mDisplayDenisty / 2.0f;
-                    float deltaY = (y - mPreviousY) / mDisplayDenisty / 2.0f;
+                    if(ApplicationState.getApplicationState() == ApplicationState.ApplicationStateEnum.GENERAL) {
+                        float deltaX = (x - mPreviousX) / mDisplayDenisty / 2.0f;
+                        float deltaY = (y - mPreviousY) / mDisplayDenisty / 2.0f;
+                        mRenderer.setRotationDelta(deltaX, deltaY);
+                    }
+                    else if (mDrawing && ApplicationState.getApplicationState() == ApplicationState.ApplicationStateEnum.SKETCH)
+                    {
 
-                    mRenderer.setRotationDelta(deltaX, deltaY);
+                        mRenderer.addLassoPoints(x, y, mIsFirstLassoPoint);
+                        mIsFirstLassoPoint = false;
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    mDrawing = false;
+                    break;
             }
 
             mPreviousX = x;
@@ -79,8 +98,7 @@ public class MainGLSurfaceView extends GLSurfaceView {
         return true;
     }
 
-    public boolean onDragEvent(DragEvent event)
-    {
+    public boolean onDragEvent(DragEvent event) {
         return true;
     }
 
@@ -99,15 +117,27 @@ public class MainGLSurfaceView extends GLSurfaceView {
         }
     }
 
-    public void changeRenderingType(Definations.RenderingModeType _renderingTypeMode)
-    {
+    public void changeRenderingType(Definations.RenderingModeType _renderingTypeMode) {
         mRenderer.changeRenderingType(_renderingTypeMode);
         requestRender();
     }
 
-    public void loadMesh(TriMesh _triMesh)
+    public void changeSketchType(Definations.SketchModeType _sketchTypeMode) {
+        mRenderer.changeSketchType(_sketchTypeMode);
+    }
+
+    public void loadMesh(TriMesh _triMesh, boolean updateModelViewMatrix) {
+        mRenderer.loadMesh(_triMesh, updateModelViewMatrix);
+        requestRender();
+    }
+
+    public  ArrayList<Float> getBoundryPoits()
     {
-       mRenderer.loadMesh(_triMesh);
-       requestRender();
+       return mRenderer.getBoundryPoits();
+    }
+
+    public void ereaseSketching()
+    {
+        mRenderer.ereaseSketching();
     }
 }
