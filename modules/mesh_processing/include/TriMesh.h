@@ -21,7 +21,6 @@ namespace TriMeshKit
             std::array<float, 3> getCenter();
             std::array<std::array<float, 3>, 2> getBoundingBox();
             void updateVerticesNormals();
-            void smooth();
             double cotan(const HalfedgeHandle& _he) const;
 
             void refresh(bool _updateNormals = true);

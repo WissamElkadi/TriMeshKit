@@ -29,7 +29,7 @@ android {
             jniLibs.srcDir "$EXTERNAL_LIB_DIR/Release"
         }
         debug{
-            jniLibs.srcDir "$EXTERNAL_LIB_DIR/Debug"
+            jniLibs.srcDir "$EXTERNAL_LIB_DIR/Release"
         }
     }
 }

@@ -68,35 +68,6 @@ void TriMeshKit::MeshProcessing::TriMesh::updateVerticesNormals()
     release_face_normals();
 }
 
-void TriMeshKit::MeshProcessing::TriMesh::smooth()
-{
-    TriMeshLinearSystem<Point> triMeshLinearSystem(*this, points_pph());
-
-    /*triMeshLinearSystem.addToLeftMatrix(IDENTITY, 1.0, INIT);
-    triMeshLinearSystem.addToLeftMatrix(LAPLACIAN, 0.001, SUB);
-
-    triMeshLinearSystem.addToRightMatrix(IDENTITY, 1.0, INIT);*/
-
-    triMeshLinearSystem.addToLeftMatrix(LAPLACIAN, 1.0, INIT);
-    triMeshLinearSystem.addToRightMatrix(LAPLACIAN, 1.0, INIT);
-
-    triMeshLinearSystem.addDirichletBoundryCondition(vertex_handle(5687), point(vertex_handle(5687)) + OpenMesh::Vec3f(0.0, -3.0, 0.0));
-    for (auto vh : vv_range(vertex_handle(5687)))
-    {
-        triMeshLinearSystem.addDirichletBoundryCondition(vh, point(vh) + OpenMesh::Vec3f(0.0, -3.0, 0.0));
-    }
-
-
-    triMeshLinearSystem.addDirichletBoundryCondition(vertex_handle(3685), point(vertex_handle(3685)));
-    for (auto vh : vv_range(vertex_handle(3685)))
-    {
-        triMeshLinearSystem.addDirichletBoundryCondition(vh, point(vh));
-    }
-
-    triMeshLinearSystem.solve();
-    refresh();
-}
-
 void TriMeshKit::MeshProcessing::TriMesh::refresh(bool _updateNormals /*= true*/)
 {
     if (!mIsDirty)

@@ -22,30 +22,31 @@ import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.trimeshkit.meshprocessing.TriMesh;
+import com.trimeshkit.meshprocessing.TriMeshAlgorithms;
 import com.trimeshkit.meshprocessing.TriMeshUtils;
 
 public class MainSurfaceActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener , View.OnClickListener
-        {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
-            // Used to load the 'MeshTools' library on application startup.
-            static {
-                System.loadLibrary("TriMeshKit-JNI");
-            }
+    // Used to load the 'TriMeshKit' library on application startup.
+    static {
+        System.loadLibrary("TriMeshKit-JNI");
+    }
 
-            private TriMesh mTriMesh;
+    private TriMesh mTriMesh;
     private MainGLSurfaceView mGLView;
     private Boolean mIsFABOpen = false;
-    private FloatingActionButton mRenderingFAAB,mSolidRenderingFAB,mSolidWireframeRenderingFAB, mWireframeRenderingFAB, mNormalRenderingFAB, mPointRenderingFAB;
-    private Animation fab_open,fab_close,rotate_forward,rotate_backward;
+    private FloatingActionButton mRenderingFAAB, mSolidRenderingFAB, mSolidWireframeRenderingFAB, mWireframeRenderingFAB, mNormalRenderingFAB, mPointRenderingFAB;
+    private Animation fab_open, fab_close, rotate_forward, rotate_backward;
 
     private static final int PICK_MESH_REQUEST = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Apply screen orientation
-      //  setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //  setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         setContentView(R.layout.main_layout);
 
@@ -86,19 +87,18 @@ public class MainSurfaceActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-
         /// FAB
-        mRenderingFAAB = (FloatingActionButton)findViewById(R.id.renderingFAB);
-        mSolidRenderingFAB = (FloatingActionButton)findViewById(R.id.solidRenderingFAB);
-        mSolidWireframeRenderingFAB = (FloatingActionButton)findViewById(R.id.solidWireframeRenderingFAB);
-        mWireframeRenderingFAB = (FloatingActionButton)findViewById(R.id.wireframeRenderingFAB);
-        mNormalRenderingFAB= (FloatingActionButton)findViewById(R.id.normalRenderingFAB);
-        mPointRenderingFAB= (FloatingActionButton)findViewById(R.id.pointRenderingFAB);
+        mRenderingFAAB = (FloatingActionButton) findViewById(R.id.renderingFAB);
+        mSolidRenderingFAB = (FloatingActionButton) findViewById(R.id.solidRenderingFAB);
+        mSolidWireframeRenderingFAB = (FloatingActionButton) findViewById(R.id.solidWireframeRenderingFAB);
+        mWireframeRenderingFAB = (FloatingActionButton) findViewById(R.id.wireframeRenderingFAB);
+        mNormalRenderingFAB = (FloatingActionButton) findViewById(R.id.normalRenderingFAB);
+        mPointRenderingFAB = (FloatingActionButton) findViewById(R.id.pointRenderingFAB);
 
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
-        fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
-        rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward);
-        rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_backward);
+        fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+        rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_forward);
+        rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_backward);
 
         mRenderingFAAB.setOnClickListener(this);
         mSolidRenderingFAB.setOnClickListener(this);
@@ -109,15 +109,13 @@ public class MainSurfaceActivity extends AppCompatActivity
     }
 
     @Override
-    protected  void onResume()
-    {
+    protected void onResume() {
         super.onResume();
         mGLView.onResume();
     }
 
     @Override
-    protected  void onPause()
-    {
+    protected void onPause() {
         super.onPause();
         mGLView.onPause();
     }
@@ -183,10 +181,9 @@ public class MainSurfaceActivity extends AppCompatActivity
     }
 
     @Override
-    public void onClick(View v)
-    {
+    public void onClick(View v) {
         int id = v.getId();
-        switch (id){
+        switch (id) {
             case R.id.renderingFAB:
                 animateFAB();
                 break;
@@ -208,8 +205,8 @@ public class MainSurfaceActivity extends AppCompatActivity
         }
     }
 
-    public void animateFAB(){
-        if(mIsFABOpen){
+    public void animateFAB() {
+        if (mIsFABOpen) {
             mRenderingFAAB.startAnimation(rotate_backward);
             mSolidRenderingFAB.startAnimation(fab_close);
             mSolidWireframeRenderingFAB.startAnimation(fab_close);
@@ -249,85 +246,81 @@ public class MainSurfaceActivity extends AppCompatActivity
         }
     }
 
-            private class SmoothMeshTask extends AsyncTask<Void, Integer, Boolean> {
+    private class SmoothMeshTask extends AsyncTask<Void, Integer, Boolean> {
 
-                private MainSurfaceActivity activity;
-                private ProgressDialog progressBar;
+        private MainSurfaceActivity activity;
+        private ProgressDialog progressBar;
 
-                public SmoothMeshTask(MainSurfaceActivity context) {
+        public SmoothMeshTask(MainSurfaceActivity context) {
 
-                    activity = context;
-                    progressBar = new ProgressDialog(context);
-                    progressBar.setMessage("Smoothing Mesh ...");
-                    progressBar.setIndeterminate(true);
-                    progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                }
+            activity = context;
+            progressBar = new ProgressDialog(context);
+            progressBar.setMessage("Smoothing Mesh ...");
+            progressBar.setIndeterminate(true);
+            progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        }
 
-                protected void onPreExecute() {
-                    progressBar.show();
-                }
+        protected void onPreExecute() {
+            progressBar.show();
+        }
 
-                protected void onProgressUpdate(Integer... progress) {
-                }
+        protected void onProgressUpdate(Integer... progress) {
+        }
 
-                protected Boolean doInBackground(Void... parms) {
-                    activity.mTriMesh.smoothMesh();
+        protected Boolean doInBackground(Void... parms) {
+            return TriMeshAlgorithms.smoothMesh(activity.mTriMesh);
+        }
 
-                    return true;
-                }
+        protected void onPostExecute(Boolean result) {
+            progressBar.dismiss();
+        }
+    }
 
-                protected void onPostExecute(Boolean result) {
-                    progressBar.dismiss();
-                }
-            }
+    private class LoadMeshTask extends AsyncTask<String, Integer, Boolean> {
 
-            private class LoadMeshTask extends AsyncTask<String, Integer, Boolean> {
+        private MainSurfaceActivity activity;
+        private ProgressDialog progressBar;
 
-                private MainSurfaceActivity activity;
-                private ProgressDialog progressBar;
+        public LoadMeshTask(MainSurfaceActivity context) {
 
-                public LoadMeshTask(MainSurfaceActivity context) {
+            activity = context;
+            progressBar = new ProgressDialog(context);
+            progressBar.setMessage("Loading Mesh ...");
+            progressBar.setIndeterminate(true);
+            progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        }
 
-                    activity = context;
-                    progressBar = new ProgressDialog(context);
-                    progressBar.setMessage("Loading Mesh ...");
-                    progressBar.setIndeterminate(true);
-                    progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                }
+        protected void onPreExecute() {
+            progressBar.show();
+        }
 
-                protected void onPreExecute() {
-                    progressBar.show();
-                }
+        protected void onProgressUpdate(Integer... progress) {
+        }
 
-                protected void onProgressUpdate(Integer... progress) {
-                }
+        protected Boolean doInBackground(String... parms) {
+            activity.mTriMesh = new TriMesh();
+            boolean loaded = TriMeshUtils.readMesh(activity.mTriMesh, parms[0], true);
 
-                protected Boolean doInBackground(String... parms) {
-                    activity.mTriMesh = new TriMesh();
-                    boolean loaded = TriMeshUtils.readMesh(activity.mTriMesh, parms[0], true);
-
-                    if(loaded) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                activity.mGLView.loadMesh(activity.mTriMesh);
-                            }
-                        });
+            if (loaded) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        activity.mGLView.loadMesh(activity.mTriMesh);
                     }
-                    else
-                    {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(activity, "Couldn't Load mesh", Toast.LENGTH_LONG).show();
-                            }
-                        });
+                });
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(activity, "Couldn't Load mesh", Toast.LENGTH_LONG).show();
                     }
-                    return true;
-                }
-
-                protected void onPostExecute(Boolean result) {
-                    progressBar.dismiss();
-                }
+                });
             }
+            return true;
+        }
+
+        protected void onPostExecute(Boolean result) {
+            progressBar.dismiss();
+        }
+    }
 }

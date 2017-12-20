@@ -12,7 +12,7 @@ namespace TriMeshKit
         class LaplaceBeltramiOperator
         {
         public:
-            static void build(const TriMesh& _triMesh, Eigen::SparseMatrix<double>& _laplaceMatix);
+            static void build(const TriMesh& _triMesh, Eigen::SparseMatrix<double>& _laplaceMatix, Eigen::SparseMatrix<double>& _massMatix);
 
         };
     } //MeshProcessing

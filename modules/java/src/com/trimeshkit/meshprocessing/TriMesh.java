@@ -9,7 +9,8 @@ public class TriMesh
     private Buffer mNormals;
     private Buffer mPositions;
     private Buffer mFacesIndices;
-    private boolean mDirty = true;
+	
+    public boolean mDirty = true;
 
     public TriMesh()
 	{
@@ -52,12 +53,6 @@ public class TriMesh
         return (float)Math.sqrt(Math.pow((bb[0]-bb[3]),2) +
                 Math.pow((bb[2]-bb[4]),2) + Math.pow((bb[3]-bb[5]),2));
     }
-
-    public void smoothMesh()
-    {
-        smooth();
-        mDirty = true;
-    }
 	
     public native float[] getCenter();
     public native float[] getBoundingBox();
@@ -67,7 +62,6 @@ public class TriMesh
     public native void setDirty(boolean _isDirty);
 	public native boolean isDirty();
 
-    private native void smooth();
 	private native void initialise();
     private native float[] getInternalVerticesPoints();
     private native float[] getInternalVerticesNormals();

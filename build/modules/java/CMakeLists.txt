@@ -7,9 +7,9 @@ set(LIB_SRC
 	${LIB_DIR}/src/NativeHandle.cpp  
     ${LIB_DIR}/src/meshprocessing/com_trimeshkit_meshprocessing_TriMesh.cpp
 	${LIB_DIR}/src/meshprocessing/com_trimeshkit_meshprocessing_TriMeshUtils.cpp
+    ${LIB_DIR}/src/meshprocessing/com_trimeshkit_meshprocessing_TriMeshAlgorithms.cpp
 )
 
-# Include Files
 # Include Files
 set(LIB_INC
     ${LIB_DIR}/include/NativeHandle.h  
@@ -18,7 +18,7 @@ set(LIB_INC
 # Source files grouping in IDE
 source_group("src" FILES ${LIB_SRC})
 
-# if(TRIMESHKIT_PLATFORM_ANDROID)
+if(TRIMESHKIT_PLATFORM_ANDROID)
     add_library(${TARGET_TRI_MESH_KIT_JNI_LIB_NAME} SHARED ${LIB_SRC} ${LIB_INC})
 
     target_link_libraries(${TARGET_TRI_MESH_KIT_JNI_LIB_NAME}
@@ -26,10 +26,10 @@ source_group("src" FILES ${LIB_SRC})
                           ${TARGET_OPEN_MESH_CORE_LIB_NAME}
 						  )
 
-# else()
-    # message(WARNING "java is not supposed to build for this platform")
-    # return()
-# endif()
+else()
+    message(WARNING "java is not supposed to build for this platform")
+    return()
+endif()
 
 target_include_directories(${TARGET_TRI_MESH_KIT_JNI_LIB_NAME}
                      PUBLIC
@@ -54,6 +54,7 @@ set(JAVA_SRC
     ${JAVA_PACKAGE_DIR}/common/utility/BufferUtility.java	
     ${JAVA_PACKAGE_DIR}/meshprocessing/TriMesh.java
 	${JAVA_PACKAGE_DIR}/meshprocessing/TriMeshUtils.java
+    ${JAVA_PACKAGE_DIR}/meshprocessing/TriMeshAlgorithms.java
 )
 
 add_jar(${TARGET_TRI_MESH_KIT_JAVA_LIB_NAME} ${JAVA_SRC})
@@ -63,4 +64,3 @@ add_custom_command(TARGET  ${TARGET_TRI_MESH_KIT_JAVA_LIB_NAME} POST_BUILD
                             ${CMAKE_BINARY_DIR}/modules/java/${TARGET_TRI_MESH_KIT_JAVA_LIB_NAME}.jar
                             ${ROOT_DIR}/bin/${SELECTED_PLATFORM}/${TARGET_TRI_MESH_KIT_JAVA_LIB_NAME}.jar
                           )
-						  
