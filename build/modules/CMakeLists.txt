@@ -3,4 +3,7 @@ project(Modules)
 
 # Modules
 add_subdirectory("mesh_processing")
-add_subdirectory("java")
+
+if(TRIMESHKIT_PLATFORM_ANDROID)
+    add_subdirectory("java")
+endif()

@@ -1,6 +1,6 @@
 #3rdparty Libs
 set(OPENMESH_ROOT ${ROOT_DIR}/3rdparty/open_mesh)
-set(EIGEN_ROOT ${ROOT_DIR}/3rdparty/eigen)
+set(EIGEN_ROOT ${ROOT_DIR}/3rdparty/eigen_lib)
 set(MODULES_ROOT ${ROOT_DIR}/modules)
 
 # Libs Names

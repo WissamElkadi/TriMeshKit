@@ -184,8 +184,8 @@ JNIEXPORT void JNICALL Java_com_trimeshkit_meshprocessing_TriMesh_setDirty
 
  /*
  * Class:     com_trimeshkit_meshprocessing_TriMesh
- * Method:    initialise
- * Signature: ()V
+ * Method:    getNumberOfFaces
+ * Signature: ()I
  */
 JNIEXPORT jint JNICALL Java_com_trimeshkit_meshprocessing_TriMesh_getNumberOfFaces
   (JNIEnv* _env, jobject _obj)
@@ -194,13 +194,18 @@ JNIEXPORT jint JNICALL Java_com_trimeshkit_meshprocessing_TriMesh_getNumberOfFac
       return inst->n_faces();
   }
 
+  
+ /*
+ * Class:     com_trimeshkit_meshprocessing_TriMesh
+ * Method:    isDirty
+ * Signature: ()Z
+ */
 JNIEXPORT jboolean JNICALL Java_com_trimeshkit_meshprocessing_TriMesh_isDirty
 (JNIEnv* _env, jobject _obj)
 {
     TriMesh *inst = getHandle<TriMesh>(_env, _obj);
     return inst->isDirty();
 }
-  
   
 /*
  * Class:     com_trimeshkit_meshprocessing_TriMesh

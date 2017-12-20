@@ -3,6 +3,9 @@
 #include <OpenMesh/Core/IO/MeshIO.hh>
 
 #include "TriMesh.h"
+#include "TriMeshLinearSystem.h"
+#include "LaplaceBeltramiOperator.h"
+#include "OpenMesh/Core/Geometry/Vector11T.hh"
 
 using namespace TriMeshKit::MeshProcessing;
 
@@ -123,7 +126,7 @@ void TriMeshKit::MeshProcessing::TriMesh::refresh(bool _updateNormals /*= true*/
 
     auto min = mBoundingBox.at(0);
     auto max = mBoundingBox.at(1);
-    mCenter[0] = float (min.at(0) + max.at(0)) / 2.0f;
+    mCenter[0] = float(min.at(0) + max.at(0)) / 2.0f;
     mCenter[1] = float(min.at(1) + max.at(1)) / 2.0f;
     mCenter[2] = float(min.at(2) + max.at(2)) / 2.0f;
 
@@ -138,4 +141,24 @@ void TriMeshKit::MeshProcessing::TriMesh::setDirty(bool _isDirty)
 bool TriMeshKit::MeshProcessing::TriMesh::isDirty()
 {
     return mIsDirty;
+}
+
+double TriMeshKit::MeshProcessing::TriMesh::cotan(const HalfedgeHandle& _he) const
+{
+    if (!_he.is_valid())
+    {
+        return 0.0;
+    }
+
+    if (is_boundary(_he))
+        return 0.0;
+
+    auto& p0 = point(to_vertex_handle(next_halfedge_handle(_he)));
+    auto& p1 = point(from_vertex_handle(_he));
+    auto& p2 = point(to_vertex_handle(_he));
+
+    OpenMesh::Vec3d u(p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]); // p1 - p0
+    OpenMesh::Vec3d v(p2[0] - p0[0], p2[1] - p0[1], p2[2] - p0[2]); // p2 - p0
+
+    return OpenMesh::dot(u, v) / OpenMesh::cross(u, v).norm();
 }
