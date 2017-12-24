@@ -31,8 +31,8 @@ namespace TriMeshKit
         public:
             TriMeshLinearSystem(TriMesh& _triMesh, OpenMesh::VPropHandleT<VPropType> _vPropoHandle);
 
-            void addToRightMatrix(MatrixOperator _matrixOperator, double factor = 1.0,  OperationType _operationType = ADD);
-            void addToLeftMatrix(MatrixOperator _matrixOperator, double factor = 1.0, OperationType _operationType = ADD);
+            void addToRightMatrix(MatrixOperator _matrixOperator, double factor = 1.0,  OperationType _operationType = ADD, int _order = 1);
+            void addToLeftMatrix(MatrixOperator _matrixOperator, double factor = 1.0, OperationType _operationType = ADD, int order = 1);
 
             void addDirichletBoundryCondition(const TriMesh::VertexHandle& _vh, const VPropType& _pValue);
 

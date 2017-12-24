@@ -8,8 +8,8 @@ set(LIB_SRC
     ${LIB_DIR}/src/TriMesh.cpp
     ${LIB_DIR}/src/LaplaceBeltramiOperator.cpp
     ${LIB_DIR}/src/TriMeshLinearSystem.cpp
-	${LIB_DIR}/src/EigenUtils.cpp
-	${LIB_DIR}/src/EigenUtilsTemp.cpp
+    ${LIB_DIR}/src/EigenUtils.cpp
+    ${LIB_DIR}/src/EigenUtilsTemp.cpp
     ${LIB_DIR}/src/TriMeshAlgorithms.cpp
 )
 
@@ -19,7 +19,7 @@ set(LIB_INC
     ${LIB_DIR}/include/TriMesh.h
     ${LIB_DIR}/include/LaplaceBeltramiOperator.h
     ${LIB_DIR}/include/TriMeshLinearSystem.h
-	${LIB_DIR}/include/EigenUtils.h
+    ${LIB_DIR}/include/EigenUtils.h
     ${LIB_DIR}/include/TriMeshAlgorithms.h
 )
 
@@ -46,7 +46,7 @@ endif()
 
 target_link_libraries(${TARGET_MESH_PROCESSING_LIB_NAME}
                       ${TARGET_OPEN_MESH_CORE_LIB_NAME}
-					  ${TARGET_TRIANGLE_LIB_NAME}
+                      ${TARGET_TRIANGLE_LIB_NAME}
                 )
 
 target_include_directories(${TARGET_MESH_PROCESSING_LIB_NAME}

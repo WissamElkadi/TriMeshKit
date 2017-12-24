@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include "TriMeshAlgorithms.h"
 #include "TriMeshLinearSystem.h"
 
@@ -11,6 +12,7 @@
 extern "C"
 {
 #include <triangle.h>
+#include "OpenMesh\Core\Mesh\TriConnectivity.hh"
 }
 
 bool TriMeshKit::MeshProcessing::TriMeshAlgorithms::smooth(TriMesh& _mesh)
@@ -26,7 +28,7 @@ bool TriMeshKit::MeshProcessing::TriMeshAlgorithms::smooth(TriMesh& _mesh)
 
     auto result = triMeshLinearSystem.solve();
 
-    if(result)
+    if (result)
         _mesh.refresh();
 
     return result;
@@ -34,7 +36,8 @@ bool TriMeshKit::MeshProcessing::TriMeshAlgorithms::smooth(TriMesh& _mesh)
 
 void TriMeshKit::MeshProcessing::TriMeshAlgorithms::triangulate(TriMesh& _mesh,
     const std::vector<OpenMesh::Vec2d>& _pointList, const std::vector<OpenMesh::Vec2ui>& _segmentList, const std::vector<OpenMesh::Vec2d>& _holeList,
-    const std::vector<int>& _pointMarkerList, const std::vector<int>& _segmentMarkerList, const std::string& flags)
+    const std::vector<int>& _pointMarkerList, const std::vector<int>& _segmentMarkerList, const std::string& flags,
+    std::map<TriMesh::VertexHandle, int >& _markedVertices)
 {
     // Prepare the flags
     std::string full_flags = flags + "pz" + (_segmentMarkerList.size() || _pointMarkerList.size() ? "" : "B");
@@ -70,7 +73,8 @@ void TriMeshKit::MeshProcessing::TriMeshAlgorithms::triangulate(TriMesh& _mesh,
 
 
     in.numberofholes = _holeList.size();
-    std::copy_n(_holeList.data()->data(), _holeList.size() * 2, in.holelist);
+    if (_holeList.size() > 0)
+        std::copy_n(_holeList.data()->data(), _holeList.size() * 2, in.holelist);
 
     in.numberofregions = 0;
 
@@ -95,6 +99,7 @@ void TriMeshKit::MeshProcessing::TriMeshAlgorithms::triangulate(TriMesh& _mesh,
         auto& x = out.pointlist[j++];
         auto& y = out.pointlist[j++];
         vertices_handles[i] = _mesh.add_vertex(TriMesh::Point(x, y, 0.0f));
+        _markedVertices.emplace(vertices_handles[i], out.pointmarkerlist[i]);
     }
 
     std::vector<TriMesh::VertexHandle> face_vhandles;
@@ -124,4 +129,78 @@ void TriMeshKit::MeshProcessing::TriMeshAlgorithms::triangulate(TriMesh& _mesh,
     free(out.pointmarkerlist);
 
     _mesh.refresh(true);
+}
+
+void TriMeshKit::MeshProcessing::TriMeshAlgorithms::bendSketch(TriMesh& _mesh, const std::vector<Points2DList>& _boundryList, const std::vector<Points2DList>& _convexList, const std::vector<Points2DList>& _concaveList)
+{
+    std::vector<std::vector<Points2DList>> featurePointsLists;
+    featurePointsLists.push_back(_boundryList);
+    featurePointsLists.push_back(_convexList);
+    featurePointsLists.push_back(_concaveList);
+
+    Points2DList featurePoints;
+
+    std::vector<OpenMesh::Vec2ui> featureSegmentList;
+    std::vector<int> inputMarkedVertices;
+    int currentPointIndex = -1;
+
+    int currentFeatureList = 0;
+    for (const auto& featurePointsList : featurePointsLists)
+    {
+        for (const auto& pointList : featurePointsList)
+        {
+            int firstIndex = currentPointIndex + 1;
+            for (int i = 0; i < pointList.size() - 1; ++i)
+            {
+                currentPointIndex++;
+                featurePoints.push_back(pointList.at(i));
+                featureSegmentList.push_back(OpenMesh::Vec2ui(currentPointIndex, currentPointIndex + 1));
+                inputMarkedVertices.push_back(currentFeatureList);
+            }
+            currentPointIndex++;
+
+
+            featurePoints.push_back(pointList.at(pointList.size() - 1));
+            if (currentFeatureList == 0)
+            {
+                featureSegmentList.push_back(OpenMesh::Vec2ui(currentPointIndex, firstIndex));
+            }
+            inputMarkedVertices.push_back(currentFeatureList);
+        }
+
+        currentFeatureList++;
+    }
+
+    std::map<TriMesh::VertexHandle, int> markedVertices;
+    triangulate(_mesh, featurePoints, featureSegmentList, std::vector<OpenMesh::Vec2d>(),
+        inputMarkedVertices, std::vector<int>(), "a0.001q", markedVertices);
+
+    // Deformation Equation
+    // (C ^2) Pn = (C) * Po
+
+    TriMeshLinearSystem<TriMesh::Point> deformationLinearSystem(_mesh, _mesh.points_pph());
+
+    deformationLinearSystem.addToLeftMatrix(LAPLACIAN, 1.0, INIT, 2);
+    deformationLinearSystem.addToRightMatrix(LAPLACIAN, 1.0, INIT);
+
+    for (const auto& vh : _mesh.vertices())
+    {
+        if (_mesh.is_boundary(vh))
+        {
+            deformationLinearSystem.addDirichletBoundryCondition(vh, _mesh.point(vh));
+        }
+        else if (markedVertices.at(vh) == 1)
+        {
+            deformationLinearSystem.addDirichletBoundryCondition(vh, _mesh.point(vh) + OpenMesh::Vec3f(0.0f, 0.0f, 0.1));
+        }
+        else if (markedVertices.at(vh) == 2)
+        {
+            deformationLinearSystem.addDirichletBoundryCondition(vh, _mesh.point(vh) + OpenMesh::Vec3f(0.0f, 0.0f, -0.1));
+        }
+    }
+
+    auto result = deformationLinearSystem.solve();
+
+    if (result)
+        _mesh.refresh(true);
 }

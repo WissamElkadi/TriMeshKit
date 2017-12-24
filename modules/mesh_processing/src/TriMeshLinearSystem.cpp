@@ -33,7 +33,6 @@ void TriMeshKit::MeshProcessing::TriMeshLinearSystem<VPropType>::build()
 {
     if (mDirichletBoundryCondition.size() > 0)
     {
-        mRightMatrix;
         int numberOfKnowns = mDirichletBoundryCondition.size();
         int numberOfUnKnowns = mTriMesh.n_vertices() - numberOfKnowns;
         mUnknowns.resize(numberOfUnKnowns);
@@ -63,7 +62,7 @@ void TriMeshKit::MeshProcessing::TriMeshLinearSystem<VPropType>::build()
 
         int u = 0;
 
-#pragma omp parallel for
+        // Don't use OpenMP Here
         for (int i = 0; i < mLeftMatrix.rows(); i++)
         {
             if (unknown_mask[i])
@@ -147,7 +146,7 @@ bool TriMeshKit::MeshProcessing::TriMeshLinearSystem<VPropType>::solve()
 }
 
 template <typename VPropType>
-void TriMeshKit::MeshProcessing::TriMeshLinearSystem<VPropType>::addToRightMatrix(MatrixOperator _matrixOperator, double factor, OperationType _operationType /*= ADD*/)
+void TriMeshKit::MeshProcessing::TriMeshLinearSystem<VPropType>::addToRightMatrix(MatrixOperator _matrixOperator, double factor, OperationType _operationType /*= ADD*/, int _order /*= 1*/)
 {
     Eigen::Matrix<double, Eigen::Dynamic, VPropType::size_> tempMatrix;
     tempMatrix.resize(mTriMesh.n_vertices(), VPropType::size_);
@@ -184,7 +183,7 @@ void TriMeshKit::MeshProcessing::TriMeshLinearSystem<VPropType>::addToRightMatri
 }
 
 template <typename VPropType>
-void TriMeshKit::MeshProcessing::TriMeshLinearSystem<VPropType>::addToLeftMatrix(MatrixOperator _matrixOperator, double factor, OperationType _operationType /*= ADD*/)
+void TriMeshKit::MeshProcessing::TriMeshLinearSystem<VPropType>::addToLeftMatrix(MatrixOperator _matrixOperator, double factor, OperationType _operationType /*= ADD*/, int _order /*= 1*/)
 {
     Eigen::SparseMatrix<double> tempMatrix;
     tempMatrix.resize(mTriMesh.n_vertices(), mTriMesh.n_vertices());
@@ -204,6 +203,16 @@ void TriMeshKit::MeshProcessing::TriMeshLinearSystem<VPropType>::addToLeftMatrix
     else if (_matrixOperator == MASS)
     {
         tempMatrix = mMassMatrix.eval();
+    }
+
+    if (_order > 1)
+    {
+        Eigen::SparseMatrix<double> temptempMatrix = tempMatrix;
+        for (int i = 1; i < _order; ++i)
+        {
+            temptempMatrix = (temptempMatrix * tempMatrix).eval();
+        }
+        tempMatrix = temptempMatrix.eval();
     }
 
     if (_operationType == INIT)

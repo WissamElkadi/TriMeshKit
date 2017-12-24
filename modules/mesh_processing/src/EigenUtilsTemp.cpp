@@ -2,7 +2,7 @@
 #define MESH_PROCESSING_EIGENUTILS_TEMPL_CPP
 
 #include "EigenUtils.h"
-#include <Eigen/Core>
+
 template<typename MatrixType>
 void TriMeshKit::MeshProcessing::EigenUtils::removeRow(Eigen::PlainObjectBase<MatrixType>& matrix, unsigned int rowToRemove)
 {

@@ -127,7 +127,7 @@ public class MainSurfaceActivity extends AppCompatActivity
         }
     }
 
-    private class TriangulatePointsTask extends AsyncTask<ArrayList<Float>, Integer, Boolean> {
+    private class TriangulatePointsTask extends AsyncTask<ArrayList<ArrayList<Float>>, Integer, Boolean> {
 
         private MainSurfaceActivity activity;
         private ProgressDialog progressBar;
@@ -148,17 +148,41 @@ public class MainSurfaceActivity extends AppCompatActivity
         protected void onProgressUpdate(Integer... progress) {
         }
 
-        protected Boolean doInBackground(ArrayList<Float>... parms) {
+        protected Boolean doInBackground(ArrayList<ArrayList<Float>>... parms) {
             activity.mTriMesh = new TriMesh();
 
-            double[] doubleArray = new double[parms[0].size()];
-            int i = 0;
+            double[][] boundrayDoubleArrayList = new double[parms[0].size()][];
+            for(int j = 0; j < parms[0].size(); j++) {
+                boundrayDoubleArrayList[j] = new double[parms[0].get(j).size()];
+                int i = 0;
 
-            for (Float f : parms[0]) {
-                doubleArray[i++] = (f != null ? f : Float.NaN);
+                for (Float f : parms[0].get(j)) {
+                    boundrayDoubleArrayList[j][i++] = (f != null ? f : Float.NaN);
+                }
             }
 
-            TriMeshAlgorithms.triangulate(activity.mTriMesh, doubleArray);
+            double[][] convexDoubleArrayList = new double[parms[1].size()][];
+            for(int j = 0; j < parms[1].size(); j++) {
+                convexDoubleArrayList[j] = new double[parms[1].get(j).size()];
+                int i = 0;
+
+                for (Float f : parms[1].get(j)) {
+                    convexDoubleArrayList[j][i++] = (f != null ? f : Float.NaN);
+                }
+            }
+
+            double[][] concaveDoubleArrayList = new double[parms[2].size()][];
+            for(int j = 0; j < parms[2].size(); j++) {
+                concaveDoubleArrayList[j] = new double[parms[2].get(j).size()];
+                int i = 0;
+
+                for (Float f : parms[2].get(j)) {
+                    concaveDoubleArrayList[j][i++] = (f != null ? f : Float.NaN);
+                }
+            }
+
+            TriMeshAlgorithms.bendSketch(activity.mTriMesh, boundrayDoubleArrayList, convexDoubleArrayList,
+                    concaveDoubleArrayList);
 
             ApplicationState.setApplicationState(ApplicationState.ApplicationStateEnum.GENERAL);
 
@@ -343,9 +367,12 @@ public class MainSurfaceActivity extends AppCompatActivity
                 mGLView.ereaseSketching();
                 break;
             case R.id.applyBendSketching:
-                ArrayList<Float> boundrayList = mGLView.getBoundryPoits();
+                ArrayList<ArrayList<Float>> boundrayLists = mGLView.getBoundryPoits();
+                ArrayList<ArrayList<Float>> convexLists = mGLView.getConvexPoits();
+                ArrayList<ArrayList<Float>> concaveLists = mGLView.getConcavePoits();
+
                 TriangulatePointsTask triangulatePointsTask = new TriangulatePointsTask(this);
-                triangulatePointsTask.execute(boundrayList);
+                triangulatePointsTask.execute(boundrayLists, convexLists, concaveLists);
                 break;
             case R.id.smoothingFAB:
                 if(mTriMesh != null) {

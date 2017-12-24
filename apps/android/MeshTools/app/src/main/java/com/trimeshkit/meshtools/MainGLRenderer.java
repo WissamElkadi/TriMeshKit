@@ -249,10 +249,26 @@ public class MainGLRenderer implements GLSurfaceView.Renderer {
         mCurrentSketchingModeType = _sketchTypeMode;
     }
 
-    public ArrayList<Float> getBoundryPoits() {
-        ArrayList<Float> result = new ArrayList<>();
+    public ArrayList<ArrayList<Float>> getBoundryPoits() {
+        ArrayList<ArrayList<Float>> result = new ArrayList<>();
         for (LassoShader lassoShader : mBoundryLassoShaders)
-            result.addAll(lassoShader.getPointsSet());
+            result.add(lassoShader.getPointsSet());
+
+        return result;
+    }
+
+    public ArrayList<ArrayList<Float>> getConvexPoits() {
+        ArrayList<ArrayList<Float>> result = new ArrayList<>();
+        for (LassoShader lassoShader : mConvexLassoShaders)
+            result.add(lassoShader.getPointsSet());
+
+        return result;
+    }
+
+    public ArrayList<ArrayList<Float>> getConcavePoits() {
+        ArrayList<ArrayList<Float>> result = new ArrayList<>();
+        for (LassoShader lassoShader : mConcaveLassoShaders)
+            result.add(lassoShader.getPointsSet());
 
         return result;
     }
