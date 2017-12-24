@@ -2,6 +2,12 @@ apply plugin: 'com.android.application'
 def EXTERNAL_LIB_DIR = '../../../../bin/android'
 android {
     signingConfigs {
+        releaseSign {
+            keyAlias 'swan'
+            keyPassword 'trimeshkit17'
+            storeFile file('../keystore/TriMeshKit.jks')
+            storePassword 'trimeshkit17'
+        }
     }
     compileSdkVersion 25
     buildToolsVersion '25.0.3'
@@ -11,14 +17,19 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
+        signingConfig signingConfigs.releaseSign
     }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseSign
+            debuggable true
+            jniDebuggable true
         }
         debug {
             debuggable true
+            jniDebuggable true
         }
     }
     sourceSets {
@@ -28,9 +39,11 @@ android {
         release {
             jniLibs.srcDir "$EXTERNAL_LIB_DIR/Release"
         }
-        debug{
-            jniLibs.srcDir "$EXTERNAL_LIB_DIR/Release"
+        debug {
+            jniLibs.srcDir "$EXTERNAL_LIB_DIR/Debug"
         }
+    }
+    productFlavors {
     }
 }
 
