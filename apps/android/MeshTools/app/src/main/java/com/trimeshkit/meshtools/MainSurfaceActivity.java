@@ -22,9 +22,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.trimeshkit.meshprocessing.TriMesh;
-import com.trimeshkit.meshprocessing.TriMeshAlgorithms;
 import com.trimeshkit.meshprocessing.TriMeshUtils;
 import com.trimeshkit.state.ApplicationState;
+import com.trimeshkit.tasks.BendSketchingTask;
+import com.trimeshkit.tasks.LoadMeshTask;
+import com.trimeshkit.tasks.SmoothMeshTask;
 
 import java.util.ArrayList;
 
@@ -36,8 +38,8 @@ public class MainSurfaceActivity extends AppCompatActivity
         System.loadLibrary("TriMeshKit-JNI");
     }
 
-    private TriMesh mTriMesh;
-    private MainGLSurfaceView mGLView;
+    public  TriMesh mTriMesh;
+    public MainGLSurfaceView mGLView;
     private Boolean mIsRenderingFABOpen = false, mIsSketchingFABOpen = false;
     private FloatingActionButton mRenderingFAB, mSolidRenderingFAB, mSolidWireframeRenderingFAB, mWireframeRenderingFAB, mNormalRenderingFAB, mPointRenderingFAB;
     private FloatingActionButton mSketchingFAB, mBoundrySketchingFAB, mFlatSketchingFAB, mFeatureSketchingFAB, mConvexSketchingFAB, mConcaveSketchingFAB, mValleySketchingFAB,
@@ -47,159 +49,6 @@ public class MainSurfaceActivity extends AppCompatActivity
     private Animation fab_open, fab_close, rotate_forward, rotate_backward;
 
     private static final int PICK_MESH_REQUEST = 1;
-
-
-    private class SmoothMeshTask extends AsyncTask<Void, Integer, Boolean> {
-
-        private MainSurfaceActivity activity;
-        private ProgressDialog progressBar;
-
-        public SmoothMeshTask(MainSurfaceActivity context) {
-
-            activity = context;
-            progressBar = new ProgressDialog(context);
-            progressBar.setMessage("Smoothing Mesh ...");
-            progressBar.setIndeterminate(true);
-            progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        }
-
-        protected void onPreExecute() {
-            progressBar.show();
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
-        }
-
-        protected Boolean doInBackground(Void... parms) {
-            return TriMeshAlgorithms.smoothMesh(activity.mTriMesh);
-        }
-
-        protected void onPostExecute(Boolean result) {
-            progressBar.dismiss();
-        }
-    }
-
-    private class LoadMeshTask extends AsyncTask<String, Integer, Boolean> {
-
-        private MainSurfaceActivity activity;
-        private ProgressDialog progressBar;
-
-        public LoadMeshTask(MainSurfaceActivity context) {
-
-            activity = context;
-            progressBar = new ProgressDialog(context);
-            progressBar.setMessage("Loading Mesh ...");
-            progressBar.setIndeterminate(true);
-            progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        }
-
-        protected void onPreExecute() {
-            progressBar.show();
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
-        }
-
-        protected Boolean doInBackground(String... parms) {
-            activity.mTriMesh = new TriMesh();
-            boolean loaded = TriMeshUtils.readMesh(activity.mTriMesh, parms[0], true);
-
-            if (loaded) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        activity.mGLView.loadMesh(activity.mTriMesh, true);
-                    }
-                });
-            } else {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(activity, "Couldn't Load mesh", Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-            return true;
-        }
-
-        protected void onPostExecute(Boolean result) {
-            progressBar.dismiss();
-        }
-    }
-
-    private class TriangulatePointsTask extends AsyncTask<ArrayList<ArrayList<Float>>, Integer, Boolean> {
-
-        private MainSurfaceActivity activity;
-        private ProgressDialog progressBar;
-
-        public TriangulatePointsTask(MainSurfaceActivity context) {
-
-            activity = context;
-            progressBar = new ProgressDialog(context);
-            progressBar.setMessage("triangulate ...");
-            progressBar.setIndeterminate(true);
-            progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        }
-
-        protected void onPreExecute() {
-            progressBar.show();
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
-        }
-
-        protected Boolean doInBackground(ArrayList<ArrayList<Float>>... parms) {
-            activity.mTriMesh = new TriMesh();
-
-            double[][] boundrayDoubleArrayList = new double[parms[0].size()][];
-            for(int j = 0; j < parms[0].size(); j++) {
-                boundrayDoubleArrayList[j] = new double[parms[0].get(j).size()];
-                int i = 0;
-
-                for (Float f : parms[0].get(j)) {
-                    boundrayDoubleArrayList[j][i++] = (f != null ? f : Float.NaN);
-                }
-            }
-
-            double[][] convexDoubleArrayList = new double[parms[1].size()][];
-            for(int j = 0; j < parms[1].size(); j++) {
-                convexDoubleArrayList[j] = new double[parms[1].get(j).size()];
-                int i = 0;
-
-                for (Float f : parms[1].get(j)) {
-                    convexDoubleArrayList[j][i++] = (f != null ? f : Float.NaN);
-                }
-            }
-
-            double[][] concaveDoubleArrayList = new double[parms[2].size()][];
-            for(int j = 0; j < parms[2].size(); j++) {
-                concaveDoubleArrayList[j] = new double[parms[2].get(j).size()];
-                int i = 0;
-
-                for (Float f : parms[2].get(j)) {
-                    concaveDoubleArrayList[j][i++] = (f != null ? f : Float.NaN);
-                }
-            }
-
-            TriMeshAlgorithms.bendSketch(activity.mTriMesh, boundrayDoubleArrayList, convexDoubleArrayList,
-                    concaveDoubleArrayList);
-
-            ApplicationState.setApplicationState(ApplicationState.ApplicationStateEnum.GENERAL);
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    activity.mGLView.loadMesh(activity.mTriMesh, false);
-                }
-            });
-
-            return true;
-        }
-
-        protected void onPostExecute(Boolean result) {
-            progressBar.dismiss();
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -367,12 +216,12 @@ public class MainSurfaceActivity extends AppCompatActivity
                 mGLView.ereaseSketching();
                 break;
             case R.id.applyBendSketching:
-                ArrayList<ArrayList<Float>> boundrayLists = mGLView.getBoundryPoits();
-                ArrayList<ArrayList<Float>> convexLists = mGLView.getConvexPoits();
-                ArrayList<ArrayList<Float>> concaveLists = mGLView.getConcavePoits();
+                ArrayList<ArrayList<ArrayList<Float>>> sketchingPoints = mGLView.getSketchingPoints();
 
-                TriangulatePointsTask triangulatePointsTask = new TriangulatePointsTask(this);
-                triangulatePointsTask.execute(boundrayLists, convexLists, concaveLists);
+                BendSketchingTask bendSketchingTask = new BendSketchingTask(this);
+                bendSketchingTask.execute(sketchingPoints.get(0),
+                        sketchingPoints.get(1), sketchingPoints.get(2),
+                        sketchingPoints.get(3), sketchingPoints.get(4));
                 break;
             case R.id.smoothingFAB:
                 if(mTriMesh != null) {

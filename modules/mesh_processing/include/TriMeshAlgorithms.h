@@ -30,7 +30,10 @@ namespace TriMeshKit
                 const std::string& flags, std::map<TriMesh::VertexHandle, int>& _markedVertices);
 
             static void bendSketch(TriMesh& _mesh, const std::vector<Points2DList>& _boundryList,
-                const std::vector<Points2DList>& _convexList, const std::vector<Points2DList>& _concaveList);
+                const std::vector<Points2DList>& _convexList, const std::vector<Points2DList>& _concaveList,
+                const std::vector<Points2DList>& _ridgeList, const std::vector<Points2DList>& _valleyList);
+
+            static void duplicateSymmetric(TriMesh& _mesh);
         };
     }
 }

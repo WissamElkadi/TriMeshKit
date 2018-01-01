@@ -249,26 +249,40 @@ public class MainGLRenderer implements GLSurfaceView.Renderer {
         mCurrentSketchingModeType = _sketchTypeMode;
     }
 
-    public ArrayList<ArrayList<Float>> getBoundryPoits() {
-        ArrayList<ArrayList<Float>> result = new ArrayList<>();
+    public ArrayList<ArrayList<ArrayList<Float>>> getSketchingPoints() {
+        ArrayList<ArrayList<ArrayList<Float>>> result = new ArrayList<>();
+
+        ArrayList<ArrayList<Float>> boundrayPoints = new ArrayList<>();
         for (LassoShader lassoShader : mBoundryLassoShaders)
-            result.add(lassoShader.getPointsSet());
+            boundrayPoints.add(lassoShader.getPointsSet());
 
-        return result;
-    }
+        result.add(boundrayPoints);
 
-    public ArrayList<ArrayList<Float>> getConvexPoits() {
-        ArrayList<ArrayList<Float>> result = new ArrayList<>();
+        ArrayList<ArrayList<Float>> convexPoints = new ArrayList<>();
         for (LassoShader lassoShader : mConvexLassoShaders)
-            result.add(lassoShader.getPointsSet());
+            convexPoints.add(lassoShader.getPointsSet());
 
-        return result;
-    }
+        result.add(convexPoints);
 
-    public ArrayList<ArrayList<Float>> getConcavePoits() {
-        ArrayList<ArrayList<Float>> result = new ArrayList<>();
+        ArrayList<ArrayList<Float>> concavePoints = new ArrayList<>();
         for (LassoShader lassoShader : mConcaveLassoShaders)
-            result.add(lassoShader.getPointsSet());
+            concavePoints.add(lassoShader.getPointsSet());
+
+        result.add(convexPoints);
+
+        ArrayList<ArrayList<Float>> ridgePoints = new ArrayList<>();
+        for (LassoShader lassoShader : mRidgeLassoShaders)
+            ridgePoints.add(lassoShader.getPointsSet());
+
+        result.add(ridgePoints);
+
+
+        ArrayList<ArrayList<Float>> valleyPoints = new ArrayList<>();
+        for (LassoShader lassoShader : mValleyLassoShaders)
+            valleyPoints.add(lassoShader.getPointsSet());
+
+        result.add(valleyPoints);
+
 
         return result;
     }

@@ -131,41 +131,122 @@ void TriMeshKit::MeshProcessing::TriMeshAlgorithms::triangulate(TriMesh& _mesh,
     _mesh.refresh(true);
 }
 
-void TriMeshKit::MeshProcessing::TriMeshAlgorithms::bendSketch(TriMesh& _mesh, const std::vector<Points2DList>& _boundryList, const std::vector<Points2DList>& _convexList, const std::vector<Points2DList>& _concaveList)
+void TriMeshKit::MeshProcessing::TriMeshAlgorithms::bendSketch(TriMesh& _mesh, const std::vector<Points2DList>& _boundryList, 
+    const std::vector<Points2DList>& _convexList, const std::vector<Points2DList>& _concaveList,
+    const std::vector<Points2DList>& _ridgeList, const std::vector<Points2DList>& _valleyList)
 {
     std::vector<std::vector<Points2DList>> featurePointsLists;
     featurePointsLists.push_back(_boundryList);
     featurePointsLists.push_back(_convexList);
     featurePointsLists.push_back(_concaveList);
+    featurePointsLists.push_back(_ridgeList);
+    featurePointsLists.push_back(_valleyList);
 
     Points2DList featurePoints;
 
     std::vector<OpenMesh::Vec2ui> featureSegmentList;
     std::vector<int> inputMarkedVertices;
+
     int currentPointIndex = -1;
 
     int currentFeatureList = 0;
+    int markedIndex = 1;
+    std::map<int, float> markedIndexToZvalue;
+
     for (const auto& featurePointsList : featurePointsLists)
     {
         for (const auto& pointList : featurePointsList)
         {
+            std::vector<float> zValueVector;
+
+            // Convex , Concave interpolation
+            if (currentFeatureList == 1 || currentFeatureList == 2)
+            {
+                float minValue = 0.15;
+                float maxValue = minValue;
+
+                if (currentFeatureList == 2)
+                {
+                    minValue = -0.05;
+                    maxValue = minValue;
+                }
+
+                int middleIndex = (pointList.size() - 1) / 2;
+                float zvalue = maxValue;
+
+                for (int i = 0; i <= middleIndex; ++i)
+                {
+                    zvalue = minValue + (i / (float)middleIndex) * minValue;
+                    zValueVector.push_back(zvalue);
+                    maxValue = zvalue;
+                }
+
+                if (pointList.size() % 2 == 0)
+                {
+                    zValueVector.push_back(maxValue);
+                }
+
+                for (int j = middleIndex - 1; j >= 0; --j)
+                {
+                    zvalue = minValue + (j / (float)middleIndex) * minValue;
+                    zValueVector.push_back(zvalue);
+                }
+            }
+            else if(currentFeatureList == 3 || currentFeatureList == 4)
+            {
+                float minValue = 0.01;
+                float maxValue = 0.15;
+
+                if (currentFeatureList == 4)
+                {
+                    minValue = -0.07;
+                    maxValue = -0.01;
+                }
+
+                float addedValue = (maxValue - minValue) / float(pointList.size() - 1);
+                float currentValue = maxValue;
+                for (int i = 0; i < pointList.size(); ++i)
+                {
+                    zValueVector.push_back(currentValue);
+                    currentValue -= addedValue;
+                }
+            }
+
             int firstIndex = currentPointIndex + 1;
+
             for (int i = 0; i < pointList.size() - 1; ++i)
             {
                 currentPointIndex++;
                 featurePoints.push_back(pointList.at(i));
                 featureSegmentList.push_back(OpenMesh::Vec2ui(currentPointIndex, currentPointIndex + 1));
-                inputMarkedVertices.push_back(currentFeatureList);
+
+                if (currentFeatureList != 0)
+                {
+                    inputMarkedVertices.push_back(markedIndex);
+                    markedIndexToZvalue.emplace(markedIndex++, zValueVector.at(i));
+                }
+                else
+                {
+                    inputMarkedVertices.push_back(0);
+                }
             }
             currentPointIndex++;
 
-
             featurePoints.push_back(pointList.at(pointList.size() - 1));
+            if (currentFeatureList != 0)
+            {
+                markedIndexToZvalue.emplace(markedIndex, zValueVector.at(pointList.size() - 1));
+                inputMarkedVertices.push_back(markedIndex++);
+            }
+            else
+            {
+                inputMarkedVertices.push_back(0);
+            }
+
             if (currentFeatureList == 0)
             {
                 featureSegmentList.push_back(OpenMesh::Vec2ui(currentPointIndex, firstIndex));
             }
-            inputMarkedVertices.push_back(currentFeatureList);
         }
 
         currentFeatureList++;
@@ -189,18 +270,54 @@ void TriMeshKit::MeshProcessing::TriMeshAlgorithms::bendSketch(TriMesh& _mesh, c
         {
             deformationLinearSystem.addDirichletBoundryCondition(vh, _mesh.point(vh));
         }
-        else if (markedVertices.at(vh) == 1)
+        else if (markedVertices.at(vh) != 0)
         {
-            deformationLinearSystem.addDirichletBoundryCondition(vh, _mesh.point(vh) + OpenMesh::Vec3f(0.0f, 0.0f, 0.1));
-        }
-        else if (markedVertices.at(vh) == 2)
-        {
-            deformationLinearSystem.addDirichletBoundryCondition(vh, _mesh.point(vh) + OpenMesh::Vec3f(0.0f, 0.0f, -0.1));
+            deformationLinearSystem.addDirichletBoundryCondition(vh, _mesh.point(vh) + OpenMesh::Vec3f(0.0f, 0.0f, markedIndexToZvalue.at(markedVertices.at(vh))));
         }
     }
 
     auto result = deformationLinearSystem.solve();
 
+    //duplicateSymmetric(_mesh);
+
     if (result)
         _mesh.refresh(true);
+
+    TriMeshUtils::writeMesh(_mesh, "sdcard/wissam.stl");
+}
+
+void TriMeshKit::MeshProcessing::TriMeshAlgorithms::duplicateSymmetric(TriMesh& _mesh)
+{
+    std::map<TriMesh::VertexHandle, TriMesh::VertexHandle> verticesMap;
+    for (const auto& vh : _mesh.vertices())
+    {
+        if (_mesh.is_boundary(vh))
+            continue;
+
+        auto opp_vh = _mesh.add_vertex(_mesh.point(vh) * OpenMesh::Vec3d(1.0, 1.0, -1.0));
+        verticesMap.emplace(vh, opp_vh);
+    }
+
+    std::vector<TriMesh::VertexHandle> face_vertices;
+
+    for (const auto& fh : _mesh.faces())
+    {
+        face_vertices.clear();
+
+        for (const auto& fvh : _mesh.fv_range(fh))
+        {
+            if (_mesh.is_boundary(fvh))
+            {
+                face_vertices.push_back(fvh);
+            }
+            else
+            {
+                face_vertices.push_back(verticesMap.at(fvh));
+            }
+        }
+        std::swap(face_vertices[1], face_vertices[2]);
+        _mesh.add_face(face_vertices);
+    }
+
+    _mesh.setDirty(true);
 }

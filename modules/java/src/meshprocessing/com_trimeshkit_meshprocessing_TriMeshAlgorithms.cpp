@@ -1,6 +1,6 @@
 /**
  * @Date:   2017-12-20T20:42:46+00:00
- * @Last modified time: 2017-12-22T23:13:59+00:00
+ * @Last modified time: 2017-12-31T23:02:32+00:00
  */
 
 
@@ -101,7 +101,8 @@ JNIEXPORT bool JNICALL Java_com_trimeshkit_meshprocessing_TriMeshAlgorithms_smoo
 
  JNIEXPORT void JNICALL Java_com_trimeshkit_meshprocessing_TriMeshAlgorithms_bendSketch
  (JNIEnv * _env, jclass _class, jobject _mesh, jobjectArray  _boundryPointsList,
-  jobjectArray  _convexPointsList, jobjectArray _concavePointsList)
+  jobjectArray  _convexPointsList, jobjectArray _concavePointsList,
+  jobjectArray  _ridgePointsList, jobjectArray _valleyPointsList)
  {
   TriMesh *inst = getHandle<TriMesh>(_env, _mesh);
 
@@ -117,7 +118,16 @@ JNIEXPORT bool JNICALL Java_com_trimeshkit_meshprocessing_TriMeshAlgorithms_smoo
   std::vector<std::vector<OpenMesh::Vec2d>> triMeshConcaveLists;
   getSTDVectorFromJObjectArrAy(_env, _concavePointsList, triMeshConcaveLists);
 
-  TriMeshAlgorithms::bendSketch( *inst, triMeshBoundryLists, triMeshConvexLists, triMeshConcaveLists);
+  // Ridge
+  std::vector<std::vector<OpenMesh::Vec2d>> triMeshRidgeLists;
+  getSTDVectorFromJObjectArrAy(_env, _ridgePointsList, triMeshRidgeLists);
+
+  // Valley
+  std::vector<std::vector<OpenMesh::Vec2d>> triMeshValleyLists;
+  getSTDVectorFromJObjectArrAy(_env, _valleyPointsList, triMeshValleyLists);
+
+  TriMeshAlgorithms::bendSketch( *inst, triMeshBoundryLists, triMeshConvexLists, triMeshConcaveLists,
+      triMeshRidgeLists, triMeshValleyLists);
  }
 
 #ifdef __cplusplus

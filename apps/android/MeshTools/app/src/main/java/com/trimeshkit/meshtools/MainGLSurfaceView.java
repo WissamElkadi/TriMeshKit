@@ -131,16 +131,8 @@ public class MainGLSurfaceView extends GLSurfaceView {
         requestRender();
     }
 
-    public ArrayList<ArrayList<Float>> getBoundryPoits() {
-        return mRenderer.getBoundryPoits();
-    }
-
-    public ArrayList<ArrayList<Float>> getConvexPoits() {
-        return mRenderer.getConvexPoits();
-    }
-
-    public ArrayList<ArrayList<Float>> getConcavePoits() {
-        return mRenderer.getConcavePoits();
+    public ArrayList<ArrayList<ArrayList<Float>>> getSketchingPoints() {
+        return mRenderer.getSketchingPoints();
     }
 
     public void ereaseSketching()
