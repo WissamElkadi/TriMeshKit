@@ -28,20 +28,24 @@ source_group("include" FILES ${LIB_INC})
 source_group("src" FILES ${LIB_SRC})
 
 if(TRIMESHKIT_PLATFORM_ANDROID)
-                
+
     add_library(${TARGET_MESH_PROCESSING_LIB_NAME} SHARED ${LIB_SRC} ${LIB_INC})
 
 elseif(TRIMESHKIT_PLATFORM_WINDOWS)
 
+    add_definitions(
+        -D_USE_MATH_DEFINES
+        )
+
     link_directories(${ROOT_DIR}/bin/${SELECTED_PLATFORM}/${TARGET_ARCH}
                 )
-                
+
     add_library(${TARGET_MESH_PROCESSING_LIB_NAME} SHARED ${LIB_SRC} ${LIB_INC})
 
     add_library(OpenMeshCoreLib SHARED IMPORTED)
     set_property(TARGET OpenMeshCoreLib PROPERTY IMPORTED_LOCATION ${TARGET_OPEN_MESH_CORE_LIB_NAME})
     set_property(TARGET OpenMeshCoreLib PROPERTY IMPORTED_IMPLIB ${TARGET_OPEN_MESH_CORE_LIB_NAME})
-    
+
 endif()
 
 target_link_libraries(${TARGET_MESH_PROCESSING_LIB_NAME}
