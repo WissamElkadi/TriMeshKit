@@ -3,16 +3,16 @@ project(OpenMeshCore)
 set(LIB_DIR ${OPENMESH_ROOT})
 
 # source code directories
-set (directories 
-  ${LIB_DIR}/src/OpenMesh/Core/Geometry 
-  ${LIB_DIR}/src/OpenMesh/Core/IO 
-  ${LIB_DIR}/src/OpenMesh/Core/IO/exporter 
-  ${LIB_DIR}/src/OpenMesh/Core/IO/importer 
-  ${LIB_DIR}/src/OpenMesh/Core/IO/reader 
+set (directories
+  ${LIB_DIR}/src/OpenMesh/Core/Geometry
+  ${LIB_DIR}/src/OpenMesh/Core/IO
+  ${LIB_DIR}/src/OpenMesh/Core/IO/exporter
+  ${LIB_DIR}/src/OpenMesh/Core/IO/importer
+  ${LIB_DIR}/src/OpenMesh/Core/IO/reader
   ${LIB_DIR}/src/OpenMesh/Core/IO/writer
-  ${LIB_DIR}/src/OpenMesh/Core/Mesh 
-  ${LIB_DIR}/src/OpenMesh/Core/Mesh/gen 
-  ${LIB_DIR}/src/OpenMesh/Core/System 
+  ${LIB_DIR}/src/OpenMesh/Core/Mesh
+  ${LIB_DIR}/src/OpenMesh/Core/Mesh/gen
+  ${LIB_DIR}/src/OpenMesh/Core/System
   ${LIB_DIR}/src/OpenMesh/Core/Utils
   )
 
@@ -31,7 +31,7 @@ append_files (LIB_SRC "*.cc" ${directories})
 if(TRIMESHKIT_PLATFORM_ANDROID)
     add_library(${TARGET_OPEN_MESH_CORE_LIB_NAME} SHARED ${LIB_SRC} ${LIB_INC})
 elseif(TRIMESHKIT_PLATFORM_WINDOWS)
-    add_library(${TARGET_OPEN_MESH_CORE_LIB_NAME}  ${LIB_SRC} ${LIB_INC})
+    add_library(${TARGET_OPEN_MESH_CORE_LIB_NAME} STATIC ${LIB_SRC} ${LIB_INC})
 endif()
 
 target_include_directories(${TARGET_OPEN_MESH_CORE_LIB_NAME}

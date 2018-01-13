@@ -15,13 +15,18 @@ set(LIB_INC
 # Source files grouping in IDE
 source_group("include" FILES ${LIB_INC})
 source_group("src" FILES ${LIB_SRC})
-   
+
 add_definitions(
     -DANSI_DECLARATORS
-	-DTRILIBRARY
+    -DTRILIBRARY
+    -DNO_TIMER
 )
-	
-add_library(${TARGET_TRIANGLE_LIB_NAME} SHARED  ${LIB_SRC} ${LIB_INC})
+
+if(TRIMESHKIT_PLATFORM_ANDROID)
+    add_library(${TARGET_TRIANGLE_LIB_NAME} SHARED ${LIB_SRC} ${LIB_INC})
+elseif(TRIMESHKIT_PLATFORM_WINDOWS)
+    add_library(${TARGET_TRIANGLE_LIB_NAME} STATIC ${LIB_SRC} ${LIB_INC})
+endif()
 
 target_compile_definitions(${TARGET_TRIANGLE_LIB_NAME} PRIVATE  -DTRILIBRARY -DANSI_DECLARATORS)
 
