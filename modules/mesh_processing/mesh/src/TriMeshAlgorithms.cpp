@@ -162,12 +162,12 @@ void TriMeshKit::MeshProcessing::TriMeshAlgorithms::bendSketch(TriMesh& _mesh, c
             // Convex , Concave interpolation
             if (currentFeatureList == 1 || currentFeatureList == 2)
             {
-                float minValue = 0.15;
+                float minValue = 0.2;
                 float maxValue = minValue;
 
                 if (currentFeatureList == 2)
                 {
-                    minValue = -0.05;
+                    minValue = 0.01;
                     maxValue = minValue;
                 }
 
@@ -194,13 +194,13 @@ void TriMeshKit::MeshProcessing::TriMeshAlgorithms::bendSketch(TriMesh& _mesh, c
             }
             else if(currentFeatureList == 3 || currentFeatureList == 4)
             {
-                float minValue = 0.01;
-                float maxValue = 0.15;
+                float minValue = 0.1;
+                float maxValue = 0.2;
 
                 if (currentFeatureList == 4)
                 {
-                    minValue = -0.07;
-                    maxValue = -0.01;
+                    minValue = 0.05;
+                    maxValue = 0.1;
                 }
 
                 float addedValue = (maxValue - minValue) / float(pointList.size() - 1);
@@ -235,16 +235,12 @@ void TriMeshKit::MeshProcessing::TriMeshAlgorithms::bendSketch(TriMesh& _mesh, c
             featurePoints.push_back(pointList.at(pointList.size() - 1));
             if (currentFeatureList != 0)
             {
-                markedIndexToZvalue.emplace(markedIndex, zValueVector.at(pointList.size() - 1));
-                inputMarkedVertices.push_back(markedIndex++);
+                inputMarkedVertices.push_back(markedIndex);
+                markedIndexToZvalue.emplace(markedIndex++, zValueVector.at(pointList.size() - 1));
             }
             else
             {
                 inputMarkedVertices.push_back(0);
-            }
-
-            if (currentFeatureList == 0)
-            {
                 featureSegmentList.push_back(OpenMesh::Vec2ui(currentPointIndex, firstIndex));
             }
         }
@@ -254,7 +250,7 @@ void TriMeshKit::MeshProcessing::TriMeshAlgorithms::bendSketch(TriMesh& _mesh, c
 
     std::map<TriMesh::VertexHandle, int> markedVertices;
     triangulate(_mesh, featurePoints, featureSegmentList, std::vector<OpenMesh::Vec2d>(),
-        inputMarkedVertices, std::vector<int>(), "a0.001q", markedVertices);
+        inputMarkedVertices, std::vector<int>(), "a0.0005q", markedVertices);
 
     // Deformation Equation
     // (C ^2) Pn = (C) * Po
@@ -278,7 +274,7 @@ void TriMeshKit::MeshProcessing::TriMeshAlgorithms::bendSketch(TriMesh& _mesh, c
 
     auto result = deformationLinearSystem.solve();
 
-    //duplicateSymmetric(_mesh);
+    duplicateSymmetric(_mesh);
 
     if (result)
         _mesh.refresh(true);
