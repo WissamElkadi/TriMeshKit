@@ -39,12 +39,7 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *             
- *   $Revision$                                                         *
- *   $Date$                   *
- *                                                                           *
-\*===========================================================================*/
+
 
 /** \file LaplaceSmootherT.hh
     
@@ -123,7 +118,7 @@ private:
 //=============================================================================
 #if defined(OM_INCLUDE_TEMPLATES) && !defined(OPENMESH_LAPLACE_SMOOTHERT_C)
 #define OPENMESH_LAPLACE_SMOOTHERT_TEMPLATES
-#include "LaplaceSmootherT.cc"
+#include "LaplaceSmootherT_impl.hh"
 #endif
 //=============================================================================
 #endif // OPENMESH_LAPLACE_SMOOTHERT_HH defined

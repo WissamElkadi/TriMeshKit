@@ -39,12 +39,7 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *             
- *   $Revision$                                                         *
- *   $Date$                   *
- *                                                                           *
-\*===========================================================================*/
+
 
 //== IMPLEMENTATION ==========================================================
 #include <OpenMesh/Core/Mesh/PolyConnectivity.hh>
@@ -364,14 +359,16 @@ bool PolyConnectivity::is_collapse_ok(HalfedgeHandle v0v1)
 
   //the edges v1-vl and vl-v0 must not be both boundary edges
   //this test makes only sense in a polymesh if the side face is a triangle
+  VertexHandle vl;
   if (!is_boundary(v0v1))
   {
     if (v0v1_triangle)
     {
-      //VertexHandle vl = to_vertex_handle(next_halfedge_handle(v0v1));
-
       HalfedgeHandle h1 = next_halfedge_handle(v0v1);
       HalfedgeHandle h2 = next_halfedge_handle(h1);
+      
+      vl = to_vertex_handle(h1);
+      
       if (is_boundary(opposite_halfedge_handle(h1)) && is_boundary(opposite_halfedge_handle(h2)))
         return false;
     }
@@ -379,18 +376,23 @@ bool PolyConnectivity::is_collapse_ok(HalfedgeHandle v0v1)
 
   //the edges v0-vr and vr-v1 must not be both boundary edges
   //this test makes only sense in a polymesh if the side face is a triangle
+  VertexHandle vr;
   if (!is_boundary(v1v0))
   {
     if (v1v0_triangle)
     {
-      //VertexHandle vr = to_vertex_handle(next_halfedge_handle(v1v0));
-
       HalfedgeHandle h1 = next_halfedge_handle(v1v0);
       HalfedgeHandle h2 = next_halfedge_handle(h1);
+      
+      vr = to_vertex_handle(h1);
+      
       if (is_boundary(opposite_halfedge_handle(h1)) && is_boundary(opposite_halfedge_handle(h2)))
         return false;
     }
   }
+
+  // if vl and vr are equal and valid (e.g. triangle case) -> fail
+  if ( vl.is_valid() && (vl == vr)) return false;
 
   // edge between two boundary vertices should be a boundary edge
   if ( is_boundary(v0) && is_boundary(v1) && !is_boundary(v0v1) && !is_boundary(v1v0))
@@ -777,6 +779,11 @@ void PolyConnectivity::collapse_edge(HalfedgeHandle _hh)
   // delete stuff
   status(edge_handle(h)).set_deleted(true);
   status(vo).set_deleted(true);
+  if (has_halfedge_status())
+  {
+    status(h).set_deleted(true);
+    status(o).set_deleted(true);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -827,6 +834,11 @@ void PolyConnectivity::collapse_loop(HalfedgeHandle _hh)
     status(fh).set_deleted(true);
   }
   status(edge_handle(h0)).set_deleted(true);
+  if (has_halfedge_status())
+  {
+    status(h0).set_deleted(true);
+    status(o0).set_deleted(true);
+  }
 }
 
 //-----------------------------------------------------------------------------

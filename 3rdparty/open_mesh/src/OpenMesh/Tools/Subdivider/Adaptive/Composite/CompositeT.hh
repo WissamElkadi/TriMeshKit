@@ -39,12 +39,7 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *             
- *   $Revision$                                                         *
- *   $Date$                   *
- *                                                                           *
-\*===========================================================================*/
+
 
 /** \file Adaptive/Composite/CompositeT.hh
     
@@ -309,7 +304,7 @@ private:
 //=============================================================================
 #if defined(OM_INCLUDE_TEMPLATES) && !defined(OPENMESH_SUBDIVIDER_ADAPTIVE_COMPOSITET_CC)
 #  define OPENMESH_SUBDIVIDER_TEMPLATES
-#  include "CompositeT.cc"
+#  include "CompositeT_impl.hh"
 #endif
 //=============================================================================
 #endif // OPENMESH_SUBDIVIDER_ADAPTIVE_COMPOSITET_HH defined

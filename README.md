@@ -8,17 +8,17 @@ TriMeshKit is a cross-platform triangular mesh processing SDK that uses half edg
 * Visual Studio (tested with 2015 in 64 bit mode)
 * Git
 * Ninja
-* Android NDK (tested with NDK r15c)
+* Android NDK (tested with NDK r19c)
 * Android SDK (tested with SDK )
 * Java (JDK 1.8)
-* Gradle (tested with gradle 3.5.1)
-* Android Studio (tested with 2.3.3)
+* Gradle (tested with gradle 5.2.1)
+* Android Studio (tested with 3.3.2)
 
 Make sure CMake, Git, MSBuild, Android NDK, Android SDK, JDK, gradle  and Ninja are in your path.
 
 ### Environment Variable
 * ANDROID_HOME
-* ANDROID_NDK_15
+* ANDROID_NDK
 * GRADLE_HOME
 * JAVA_HOME
 

@@ -39,12 +39,7 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *             
- *   $Revision$                                                         *
- *   $Date$                   *
- *                                                                           *
-\*===========================================================================*/
+
 
 /** \file ModProgMeshT.hh
 
@@ -190,7 +185,7 @@ private:
 //=============================================================================
 #if defined(OM_INCLUDE_TEMPLATES) && !defined(OPENMESH_DECIMATER_MODPROGMESH_CC)
 #define OSG_MODPROGMESH_TEMPLATES
-#include "ModProgMeshT.cc"
+#include "ModProgMeshT_impl.hh"
 #endif
 //=============================================================================
 #endif // OPENMESH_TOOLS_PROGMESHT_HH defined

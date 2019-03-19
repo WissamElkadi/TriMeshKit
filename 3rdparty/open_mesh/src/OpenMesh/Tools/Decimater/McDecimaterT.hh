@@ -39,12 +39,7 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                   *
- *                                                                           *
-\*===========================================================================*/
+
 
 /** \file McDecimaterT.hh
  */
@@ -143,7 +138,7 @@ private: //------------------------------------------------------- private data
 //=============================================================================
 #if defined(OM_INCLUDE_TEMPLATES) && !defined(OPENMESH_MULTIPLE_CHOICE_DECIMATER_DECIMATERT_CC)
 #define OPENMESH_MULTIPLE_CHOICE_DECIMATER_TEMPLATES
-#include "McDecimaterT.cc"
+#include "McDecimaterT_impl.hh"
 #endif
 //=============================================================================
 #endif // OPENMESH_MC_DECIMATER_DECIMATERT_HH defined

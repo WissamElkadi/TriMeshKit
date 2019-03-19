@@ -39,12 +39,7 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                   *
- *                                                                           *
-\*===========================================================================*/
+
 
 
 //== INCLUDES =================================================================
@@ -158,7 +153,7 @@ write_stla(const std::string& _filename, BaseExporter& _be, Options /* _opt */) 
 
 
 
-  int i, nF(int(_be.n_faces())), nV;
+  int i, nF(int(_be.n_faces()));
   Vec3f  a, b, c, n;
   std::vector<VertexHandle> vhandles;
   FaceHandle fh;
@@ -172,7 +167,7 @@ write_stla(const std::string& _filename, BaseExporter& _be, Options /* _opt */) 
   for (i=0; i<nF; ++i)
   {
     fh = FaceHandle(i);
-    nV = _be.get_vhandles(fh, vhandles);
+    const int nV = _be.get_vhandles(fh, vhandles);
 
     if (nV == 3)
     {
@@ -211,7 +206,7 @@ write_stla(std::ostream& _out, BaseExporter& _be, Options /* _opt */, std::strea
 {
   omlog() << "[STLWriter] : write ascii file\n";
 
-  int i, nF(int(_be.n_faces())), nV;
+  int i, nF(int(_be.n_faces()));
   Vec3f  a, b, c, n;
   std::vector<VertexHandle> vhandles;
   FaceHandle fh;
@@ -226,7 +221,7 @@ write_stla(std::ostream& _out, BaseExporter& _be, Options /* _opt */, std::strea
   for (i=0; i<nF; ++i)
   {
     fh = FaceHandle(i);
-    nV = _be.get_vhandles(fh, vhandles);
+    const int nV = _be.get_vhandles(fh, vhandles);
 
     if (nV == 3)
     {
@@ -273,7 +268,7 @@ write_stlb(const std::string& _filename, BaseExporter& _be, Options /* _opt */) 
   }
 
 
-  int i, nF(int(_be.n_faces())), nV;
+  int i, nF(int(_be.n_faces()));
   Vec3f  a, b, c, n;
   std::vector<VertexHandle> vhandles;
   FaceHandle fh;
@@ -294,7 +289,7 @@ write_stlb(const std::string& _filename, BaseExporter& _be, Options /* _opt */) 
   for (i=0; i<nF; ++i)
   {
     fh = FaceHandle(i);
-    nV = _be.get_vhandles(fh, vhandles);
+    const int nV = _be.get_vhandles(fh, vhandles);
 
     if (nV == 3)
     {
@@ -344,7 +339,7 @@ write_stlb(std::ostream& _out, BaseExporter& _be, Options /* _opt */, std::strea
   omlog() << "[STLWriter] : write binary file\n";
 
 
-  int i, nF(int(_be.n_faces())), nV;
+  int i, nF(int(_be.n_faces()));
   Vec3f  a, b, c, n;
   std::vector<VertexHandle> vhandles;
   FaceHandle fh;
@@ -366,7 +361,7 @@ write_stlb(std::ostream& _out, BaseExporter& _be, Options /* _opt */, std::strea
   for (i=0; i<nF; ++i)
   {
     fh = FaceHandle(i);
-    nV = _be.get_vhandles(fh, vhandles);
+    const int nV = _be.get_vhandles(fh, vhandles);
 
     if (nV == 3)
     {
