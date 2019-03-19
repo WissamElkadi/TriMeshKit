@@ -39,12 +39,6 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                        *
- *   $Date$                   *
- *                                                                           *
- \*===========================================================================*/
 
 /** \file ModEdgeLengthT.hh
  */
@@ -121,7 +115,7 @@ class ModEdgeLengthT: public ModBaseT<MeshT> {
 //=============================================================================
 #if defined(OM_INCLUDE_TEMPLATES) && !defined(OPENMESH_DECIMATER_MODEDGELENGTHT_C)
 #define MODEDGELENGTHT_TEMPLATES
-#include "ModEdgeLengthT.cc"
+#include "ModEdgeLengthT_impl.hh"
 #endif
 //=============================================================================
 #endif // OPENMESH_DECIMATER_MODEDGELENGTHT_HH defined

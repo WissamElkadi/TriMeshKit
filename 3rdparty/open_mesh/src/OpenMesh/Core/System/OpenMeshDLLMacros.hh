@@ -39,34 +39,27 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision: 566 $                                                         *
- *   $Date: 2012-03-23 18:00:57 +0100 (Fr, 23 Mär 2012) $                   *
- *                                                                           *
-\*===========================================================================*/
+// Disable the warnings about needs to have DLL interface as we have tons of vector templates
+#ifdef _MSC_VER
+  #pragma warning( disable: 4251 )
+#endif
 
-// // Disable the warnings about needs to have DLL interface as we have tons of vector templates
-// #ifdef _MSC_VER
-  // #pragma warning( disable: 4251 )
-// #endif
-
-// #ifndef OPENMESHDLLEXPORT
-	// #ifdef WIN32
-		// #ifdef OPENMESHDLL
-			// #ifdef BUILDOPENMESHDLL
-        // #define OPENMESHDLLEXPORT __declspec(dllexport)
-        // #define OPENMESHDLLEXPORTONLY __declspec(dllexport)
-			// #else
-        // #define OPENMESHDLLEXPORT __declspec(dllimport)
-        // #define OPENMESHDLLEXPORTONLY
-			// #endif
-		// #else		
-			// #define OPENMESHDLLEXPORT
-			// #define OPENMESHDLLEXPORTONLY
-		// #endif
-	// #else
+#ifndef OPENMESHDLLEXPORT
+	#ifdef WIN32
+		#ifdef OPENMESHDLL
+			#ifdef BUILDOPENMESHDLL
+        #define OPENMESHDLLEXPORT __declspec(dllexport)
+        #define OPENMESHDLLEXPORTONLY __declspec(dllexport)
+			#else
+        #define OPENMESHDLLEXPORT __declspec(dllimport)
+        #define OPENMESHDLLEXPORTONLY
+			#endif
+		#else		
+			#define OPENMESHDLLEXPORT
+			#define OPENMESHDLLEXPORTONLY
+		#endif
+	#else
 		#define OPENMESHDLLEXPORT
 		#define OPENMESHDLLEXPORTONLY
-	// #endif
-// #endif
+	#endif
+#endif

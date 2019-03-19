@@ -39,12 +39,7 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *             
- *   $Revision$                                                         *
- *   $Date$                   *
- *                                                                           *
-\*===========================================================================*/
+
 
 
 //=============================================================================
@@ -63,6 +58,7 @@
 
 #include <OpenMesh/Core/System/config.h>
 #include <OpenMesh/Core/Mesh/PolyMeshT.hh>
+#include <OpenMesh/Core/Mesh/Tags.hh>
 #include <vector>
 
 
@@ -103,11 +99,12 @@ public:
   typedef PolyMeshT<Kernel>                     PolyMesh;
 
   //@{
-  /// Determine whether this is a PolyMeshT or TriMeshT ( This function does not check the per face vertex count! It only checks if the datatype is PolyMeshT or TriMeshT )
+  /// Determine whether this is a PolyMeshT or TriMeshT (This function does not check the per face vertex count! It only checks if the datatype is PolyMeshT or TriMeshT)
+  static constexpr bool is_polymesh() { return false; }
+  static constexpr bool is_trimesh()  { return true;  }
+  using ConnectivityTag = TriConnectivityTag;
   enum { IsPolyMesh = 0 };
   enum { IsTriMesh  = 1 };
-  static bool is_polymesh() { return false; }
-  static bool is_trimesh()  { return  true; }
   //@}
 
   //--- items ---
@@ -359,9 +356,9 @@ public:
     VertexHandle p2 = this->to_vertex_handle(he2);
 
     // Calculate midpoint coordinates
-    const Point new0 = (this->point(p0) + this->point(p2)) * static_cast< typename Point::value_type >(0.5);
-    const Point new1 = (this->point(p0) + this->point(p1)) * static_cast< typename Point::value_type >(0.5);
-    const Point new2 = (this->point(p1) + this->point(p2)) * static_cast< typename Point::value_type >(0.5);
+    const Point new0 = (this->point(p0) + this->point(p2)) * static_cast<typename vector_traits<Point>::value_type >(0.5);
+    const Point new1 = (this->point(p0) + this->point(p1)) * static_cast<typename vector_traits<Point>::value_type >(0.5);
+    const Point new2 = (this->point(p1) + this->point(p2)) * static_cast<typename vector_traits<Point>::value_type >(0.5);
 
     // Add vertices at midpoint coordinates
     VertexHandle v0 = this->add_vertex(new0);
@@ -431,7 +428,7 @@ public:
 //=============================================================================
 #if defined(OM_INCLUDE_TEMPLATES) && !defined(OPENMESH_TRIMESH_C)
 #define OPENMESH_TRIMESH_TEMPLATES
-#include "TriMeshT.cc"
+#include "TriMeshT_impl.hh"
 #endif
 //=============================================================================
 #endif // OPENMESH_TRIMESH_HH defined

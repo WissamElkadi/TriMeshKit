@@ -39,12 +39,6 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                        *
- *   $Date$                   *
- *                                                                           *
- \*===========================================================================*/
 
 /** \file ModAspectRatioT.hh
  */
@@ -148,7 +142,7 @@ class ModAspectRatioT: public ModBaseT<MeshT> {
 //=============================================================================
 #if defined(OM_INCLUDE_TEMPLATES) && !defined(OPENMESH_DECIMATER_MODASPECTRATIOT_C)
 #define OPENMESH_DECIMATER_MODASPECTRATIOT_TEMPLATES
-#include "ModAspectRatioT.cc"
+#include "ModAspectRatioT_impl.hh"
 #endif
 //=============================================================================
 #endif // OPENMESH_DECIMATER_MODASPECTRATIOT_HH defined

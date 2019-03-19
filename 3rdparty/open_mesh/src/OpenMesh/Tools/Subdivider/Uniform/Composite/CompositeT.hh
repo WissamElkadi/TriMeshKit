@@ -39,12 +39,7 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *             
- *   $Revision$                                                         *
- *   $Date$                   *
- *                                                                           *
-\*===========================================================================*/
+
 
 /** \file Uniform/Composite/CompositeT.hh
     
@@ -243,7 +238,7 @@ private:
 //=============================================================================
 #if defined(OM_INCLUDE_TEMPLATES) && !defined(OPENMESH_SUBDIVIDER_UNIFORM_COMPOSITE_CC)
 #define OPENMESH_SUBDIVIDER_TEMPLATES
-#include "CompositeT.cc"
+#include "CompositeT_impl.hh"
 #endif
 //=============================================================================
 #endif // COMPOSITET_HH defined

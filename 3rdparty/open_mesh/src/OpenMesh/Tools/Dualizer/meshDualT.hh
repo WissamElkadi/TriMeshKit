@@ -39,13 +39,6 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                   *
- *                                                                           *
-\*===========================================================================*/
-
 /*
   Compute the dual of a mesh:
   - each face of the original mesh is replaced by a vertex at the center of gravity of the vertices of the face

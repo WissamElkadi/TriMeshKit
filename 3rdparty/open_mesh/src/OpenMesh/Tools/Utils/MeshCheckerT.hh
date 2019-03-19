@@ -39,12 +39,7 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *             
- *   $Revision$                                                         *
- *   $Date$                   *
- *                                                                           *
-\*===========================================================================*/
+
 
 
 #ifndef OPENMESH_MESHCHECKER_HH
@@ -124,7 +119,7 @@ private:
 //=============================================================================
 #if defined(OM_INCLUDE_TEMPLATES) && !defined(OPENMESH_MESHCHECKER_C)
 #define OPENMESH_MESHCHECKER_TEMPLATES
-#include "MeshCheckerT.cc"
+#include "MeshCheckerT_impl.hh"
 #endif
 //=============================================================================
 #endif // OPENMESH_MESHCHECKER_HH defined

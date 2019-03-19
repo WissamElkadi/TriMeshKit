@@ -39,12 +39,7 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                   *
- *                                                                           *
-\*===========================================================================*/
+
 
 
 //== INCLUDES =================================================================
@@ -97,7 +92,11 @@ write(const std::string& _filename, BaseExporter& _be, Options _opt, std::stream
     return false;
   }
 
+  // Set precision on output stream. The default is set via IOManager and passed through to all writers.
   out.precision(_precision);
+
+  // Set fixed output to avoid problems with programs not reading scientific notation correctly
+  out << std::fixed;
 
   {
 #if defined(WIN32)
@@ -224,12 +223,22 @@ write(std::ostream& _out, BaseExporter& _be, Options _opt, std::streamsize _prec
   if (!check( _be, _opt))
      return false;
 
+  // No binary mode for OBJ
+  if ( _opt.check(Options::Binary) ) {
+    omout() << "[OBJWriter] : Warning, Binary mode requested for OBJ Writer (No support for Binary mode), falling back to standard." <<  std::endl;
+  }
 
-  // check writer features
-  if ( _opt.check(Options::Binary)     || // not supported by format
-       _opt.check(Options::FaceNormal))
-     return false;
+  // check for unsupported writer features
+  if (_opt.check(Options::FaceNormal) ) {
+    omerr() << "[OBJWriter] : FaceNormal not supported by OBJ Writer" <<  std::endl;
+    return false;
+  }
 
+  // check for unsupported writer features
+  if (_opt.check(Options::VertexColor) ) {
+    omerr() << "[OBJWriter] : VertexColor not supported by OBJ Writer" <<  std::endl;
+    return false;
+  }
 
   //create material file if needed
   if ( _opt.check(Options::FaceColor) ){
@@ -270,10 +279,10 @@ write(std::ostream& _out, BaseExporter& _be, Options _opt, std::streamsize _prec
     }
   }
 
-  //collect Texturevertices from vertices
+  //collect Texture coordinates from vertices
   if(_opt.check(Options::VertexTexCoord))
   {
-    for (size_t i=0, nF=_be.n_faces(); i<nF; ++i)
+    for (size_t i=0, nV=_be.n_vertices(); i<nV; ++i)
     {
       vh = VertexHandle(static_cast<int>(i));
       t  = _be.texcoord(vh);
@@ -363,7 +372,7 @@ write(std::ostream& _out, BaseExporter& _be, Options _opt, std::streamsize _prec
         {
           // write vertex texture coordinate index
           if (_opt.check(Options::VertexTexCoord))
-            _out  << texMap[_be.texcoord(vh)];
+            _out  << texMap[_be.texcoord(vhandles[j])];
         }
 
         // write vertex normal index

@@ -39,12 +39,6 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                        *
- *   $Date$                   *
- *                                                                           *
- \*===========================================================================*/
 
 /** \file ModHausdorffT.hh
  */
@@ -159,7 +153,7 @@ class ModHausdorffT: public ModBaseT<MeshT> {
 //=============================================================================
 #if defined(OM_INCLUDE_TEMPLATES) && !defined(OPENMESH_DECIMATER_MODHAUSDORFFT_C)
 #define OPENMESH_DECIMATER_MODHAUSDORFFT_TEMPLATES
-#include "ModHausdorffT.cc"
+#include "ModHausdorffT_impl.hh"
 #endif
 //=============================================================================
 #endif // OPENMESH_DECIMATER_MODHAUSDORFFT_HH defined

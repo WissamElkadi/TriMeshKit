@@ -41,12 +41,7 @@
 
 
 
-/*===========================================================================*\
- *                                                                           *             
- *   $Revision$                                                         *
- *   $Date$                   *
- *                                                                           *
-\*===========================================================================*/
+
 
 // Set template keywords and class names properly when
 // parsing with doxygen. This only seems to work this way since

@@ -39,12 +39,7 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                   *
- *                                                                           *
-\*===========================================================================*/
+
 
 
 //=============================================================================
@@ -111,9 +106,9 @@ public:
 
   bool write(std::ostream&, BaseExporter&, Options, std::streamsize _precision = 6) const;
 
-
-
   size_t binary_size(BaseExporter& _be, Options _opt) const;
+
+  static OMFormat::uint8 get_version() { return version_; }
 
 
 protected:

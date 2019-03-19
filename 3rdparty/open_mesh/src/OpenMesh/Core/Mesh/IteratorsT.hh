@@ -39,12 +39,7 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *             
- *   $Revision$                                                         *
- *   $Date$                   *
- *                                                                           *
-\*===========================================================================*/
+
 
 #ifndef OPENMESH_ITERATORS_HH
 #define OPENMESH_ITERATORS_HH
@@ -109,9 +104,6 @@ class GenericIteratorT {
         : mesh_(&_mesh), hnd_(_hnd), skip_bits_(0)
         {
             if (_skip) enable_skipping();
-
-            // Set vertex handle invalid if the mesh contains no vertex
-            if((mesh_->*PrimitiveCountMember)() == 0) hnd_ = value_handle(-1);
         }
 
         /// Standard dereferencing operator.
@@ -129,7 +121,7 @@ class GenericIteratorT {
          * \deprecated 
          * This function clutters your code. Use dereferencing operators -> and * instead.
          */
-        DEPRECATED("This function clutters your code. Use dereferencing operators -> and * instead.")
+        OM_DEPRECATED("This function clutters your code. Use dereferencing operators -> and * instead.")
         value_handle handle() const {
             return hnd_;
         }
@@ -140,7 +132,7 @@ class GenericIteratorT {
          * Implicit casts of iterators are unsafe. Use dereferencing operators
          * -> and * instead.
          */
-        DEPRECATED("Implicit casts of iterators are unsafe. Use dereferencing operators -> and * instead.")
+        OM_DEPRECATED("Implicit casts of iterators are unsafe. Use dereferencing operators -> and * instead.")
         operator value_handle() const {
             return hnd_;
         }

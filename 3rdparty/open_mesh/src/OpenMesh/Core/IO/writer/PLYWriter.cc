@@ -39,12 +39,7 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                   *
- *                                                                           *
-\*===========================================================================*/
+
 
 
 //== INCLUDES =================================================================
@@ -125,14 +120,6 @@ write(std::ostream& _os, BaseExporter& _be, Options _opt, std::streamsize _preci
     // they are not written out even though they were requested
     _opt.unset(Options::FaceNormal);
     omerr() << "[PLYWriter] : Warning: Face normals are not supported and thus not exported! " << std::endl;
-  }
-
-  if ( _opt.check(Options::FaceColor) ) {
-    // Face normals are not supported
-    // Uncheck these options and output message that
-    // they are not written out even though they were requested
-    _opt.unset(Options::FaceColor);
-    omerr() << "[PLYWriter] : Warning: Face colors are not supported and thus not exported! " << std::endl;
   }
 
   options_ = _opt;
@@ -318,6 +305,24 @@ void _PLYWriter_::write_header(std::ostream& _out, BaseExporter& _be, Options& _
   _out << "element face " << _be.n_faces() << '\n';
   _out << "property list uchar int vertex_indices" << '\n';
 
+  if ( _opt.face_has_color() ){
+    if ( _opt.color_is_float() ) {
+      _out << "property float red" << '\n';
+      _out << "property float green" << '\n';
+      _out << "property float blue" << '\n';
+
+      if ( _opt.color_has_alpha() )
+        _out << "property float alpha" << '\n';
+    } else {
+      _out << "property uchar red" << '\n';
+      _out << "property uchar green" << '\n';
+      _out << "property uchar blue" << '\n';
+
+      if ( _opt.color_has_alpha() )
+        _out << "property uchar alpha" << '\n';
+    }
+  }
+
   _ofProps = writeCustomTypeHeader(_out, _be.kernel()->fprops_begin(), _be.kernel()->fprops_end());
 
   _out << "end_header" << '\n';
@@ -340,6 +345,7 @@ write_ascii(std::ostream& _out, BaseExporter& _be, Options _opt) const
   OpenMesh::Vec4f cAf;
   OpenMesh::Vec2f t;
   VertexHandle vh;
+  FaceHandle fh;
   std::vector<VertexHandle> vhandles;
 
   std::vector<CustomProperty> vProps;
@@ -405,11 +411,36 @@ write_ascii(std::ostream& _out, BaseExporter& _be, Options _opt) const
   // faces (indices starting at 0)
   for (i=0, nF=int(_be.n_faces()); i<nF; ++i)
   {
+    fh = FaceHandle(i);
+
     // write vertex indices per face
-    nV = _be.get_vhandles(FaceHandle(i), vhandles);
+    nV = _be.get_vhandles(fh, vhandles);
     _out << nV;
     for (size_t j=0; j<vhandles.size(); ++j)
       _out << " " << vhandles[j].idx();
+
+    // FaceColor
+    if ( _opt.face_has_color() ) {
+      //with alpha
+      if ( _opt.color_has_alpha() ){
+        if (_opt.color_is_float()) {
+          cAf = _be.colorAf(fh);
+          _out << " " << cAf;
+        } else {
+          cA  = _be.colorAi(fh);
+          _out << " " << cA;
+        }
+      }else{
+        //without alpha
+        if (_opt.color_is_float()) {
+          cf = _be.colorf(fh);
+          _out << " " << cf;
+        } else {
+          c  = _be.colori(fh);
+          _out << " " << c;
+        }
+      }
+    }
 
     // write custom props
     for (std::vector<CustomProperty>::iterator iter = fProps.begin(); iter < fProps.end(); ++iter)
@@ -567,6 +598,7 @@ write_binary(std::ostream& _out, BaseExporter& _be, Options _opt) const
   OpenMesh::Vec4uc c;
   OpenMesh::Vec4f cf;
   VertexHandle vh;
+  FaceHandle fh;
   std::vector<VertexHandle> vhandles;
 
   // vProps and fProps will be empty, until custom properties are supported by the binary writer
@@ -629,11 +661,34 @@ write_binary(std::ostream& _out, BaseExporter& _be, Options _opt) const
 
   for (i=0, nF=int(_be.n_faces()); i<nF; ++i)
   {
+    fh = FaceHandle(i);
+
     //face
-    nV = _be.get_vhandles(FaceHandle(i), vhandles);
+    nV = _be.get_vhandles(fh, vhandles);
     writeValue(ValueTypeUINT8, _out, nV);
     for (size_t j=0; j<vhandles.size(); ++j)
       writeValue(ValueTypeINT32, _out, vhandles[j].idx() );
+
+    // face color
+    if ( _opt.face_has_color() ) {
+        if ( _opt.color_is_float() ) {
+          cf  = _be.colorAf(fh);
+          writeValue(ValueTypeFLOAT, _out, cf[0]);
+          writeValue(ValueTypeFLOAT, _out, cf[1]);
+          writeValue(ValueTypeFLOAT, _out, cf[2]);
+
+          if ( _opt.color_has_alpha() )
+            writeValue(ValueTypeFLOAT, _out, cf[3]);
+        } else {
+          c  = _be.colorA(fh);
+          writeValue(ValueTypeUCHAR, _out, (int)c[0]);
+          writeValue(ValueTypeUCHAR, _out, (int)c[1]);
+          writeValue(ValueTypeUCHAR, _out, (int)c[2]);
+
+          if ( _opt.color_has_alpha() )
+            writeValue(ValueTypeUCHAR, _out, (int)c[3]);
+        }
+    }
 
     for (std::vector<CustomProperty>::iterator iter = fProps.begin(); iter < fProps.end(); ++iter)
       write_customProp<true>(_out,*iter,i);

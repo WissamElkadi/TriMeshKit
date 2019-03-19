@@ -39,14 +39,8 @@
  *                                                                           *
  * ========================================================================= */
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                   *
- *                                                                           *
- \*===========================================================================*/
 
-/** \file MixedDecimaterT.cc
+/** \file MixedDecimaterT.hh
  */
 
 //=============================================================================
@@ -129,7 +123,7 @@ private: //------------------------------------------------------- private data
 //=============================================================================
 #if defined(OM_INCLUDE_TEMPLATES) && !defined(OPENMESH_MIXED_DECIMATER_DECIMATERT_CC)
 #define OPENMESH_MIXED_DECIMATER_TEMPLATES
-#include "MixedDecimaterT.cc"
+#include "MixedDecimaterT_impl.hh"
 #endif
 //=============================================================================
 #endif // OPENMESH_MIXED_DECIMATER_DECIMATERT_HH
